@@ -1,26 +1,43 @@
 
-#include "WinControl.h"
+#include "WinController.h"
 #include <iostream>
 #include <windows.h>
 
-void set_up_buffer() {
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+void ConhostController::maximize() {
+    ShowWindow(m_consoleWin, SW_MAXIMIZE);
+}
+
+short ConhostController::canvas_width()
+{
+    CONSOLE_SCREEN_BUFFER_INFO info;
+    GetConsoleScreenBufferInfo(m_hOut, &info);
+    return info.dwSize.X;
+}
+
+short ConhostController::canvas_height()
+{
+    CONSOLE_SCREEN_BUFFER_INFO info;
+    GetConsoleScreenBufferInfo(m_hOut, &info);
+    return info.dwSize.Y;
+}
+
+void ConhostController::set_up_buffer() {
 
     // new buffer size
     COORD newBufferSize;
-    newBufferSize.X = GetLargestConsoleWindowSize(hOut).X;
-    newBufferSize.Y = GetLargestConsoleWindowSize(hOut).Y;
+    newBufferSize.X = GetLargestConsoleWindowSize(m_hOut).X;
+    newBufferSize.Y = GetLargestConsoleWindowSize(m_hOut).Y;
 
     // shrink the window to prevent error
     SMALL_RECT rect = { 0,0,0,0 };
-    if (!SetConsoleWindowInfo(hOut, TRUE, &rect)) {
+    if (!SetConsoleWindowInfo(m_hOut, TRUE, &rect)) {
         std::cout << "shrinking window size failed: " << GetLastError() << std::endl;
         std::cin.get(); // pause
         exit(0);
     }
 
     // set new buffer size
-    if (!SetConsoleScreenBufferSize(hOut, newBufferSize)) {
+    if (!SetConsoleScreenBufferSize(m_hOut, newBufferSize)) {
         std::cout << "SetConsoleScreenBufferSize() failed: " << GetLastError() << std::endl;
         std::cin.get(); // pause
         exit(0);
@@ -28,20 +45,19 @@ void set_up_buffer() {
 
     // now restore the window again
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);
+    GetConsoleScreenBufferInfo(m_hOut, &scrBufferInfo);
     SHORT maxWindowX = scrBufferInfo.dwMaximumWindowSize.X - 1;
     SHORT maxWindowY = scrBufferInfo.dwMaximumWindowSize.Y - 1;
     //std::cout << "Restore dimensions: " << maxWindowX << " x " << maxWindowY << std::endl; // why 67??
     rect = { 0,0,maxWindowX,maxWindowY };
-    if (!SetConsoleWindowInfo(hOut, TRUE, &rect)) {
+    if (!SetConsoleWindowInfo(m_hOut, TRUE, &rect)) {
         std::cout << "restoring window size failed: " << GetLastError() << std::endl;
         std::cin.get(); // pause
         exit(0);
     }
 }
 
-void set_resolution(SHORT width, SHORT height) {
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+void ConhostController::set_resolution(SHORT width, SHORT height) {
     HWND console = GetConsoleWindow();
 
     // get Win info
@@ -62,7 +78,7 @@ void set_resolution(SHORT width, SHORT height) {
     // shrink the window to prevent error
     SMALL_RECT rect = { 0,0,0,0 };
 
-    if (!SetConsoleWindowInfo(hOut, TRUE, &rect)) {
+    if (!SetConsoleWindowInfo(m_hOut, TRUE, &rect)) {
         std::cout << "shrinking window size failed: " << GetLastError() << std::endl;
         std::cin.get(); // pause
         exit(0);
@@ -70,14 +86,14 @@ void set_resolution(SHORT width, SHORT height) {
 
     // set new buffer size
     COORD newBufferSize = { width, height };
-    if (!SetConsoleScreenBufferSize(hOut, newBufferSize)) {
+    if (!SetConsoleScreenBufferSize(m_hOut, newBufferSize)) {
         std::cout << "SetConsoleScreenBufferSize() failed: " << GetLastError() << std::endl;
         std::cin.get(); // pause
         exit(0);
     }
     // retrieve buffer info
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);
+    GetConsoleScreenBufferInfo(m_hOut, &scrBufferInfo);
     std::cout << "Desired buffer size: " << width << " x " << height << std::endl;
     std::cout << "Actual buffer size: " << scrBufferInfo.dwSize.X << " x " << scrBufferInfo.dwSize.Y << std::endl;
 
@@ -86,7 +102,7 @@ void set_resolution(SHORT width, SHORT height) {
     SHORT maxWindowY = scrBufferInfo.dwMaximumWindowSize.Y - 1;
     //std::cout << "Restore dimensions: " << maxWindowX << " x " << maxWindowY << std::endl; // why 67??
     rect = { 0,0,maxWindowX,maxWindowY };
-    if (!SetConsoleWindowInfo(hOut, TRUE, &rect)) {
+    if (!SetConsoleWindowInfo(m_hOut, TRUE, &rect)) {
         std::cout << "restoring window size failed: " << GetLastError() << std::endl;
         std::cin.get(); // pause
         exit(0);
@@ -101,8 +117,7 @@ void set_resolution(SHORT width, SHORT height) {
     ShowScrollBar(console, SB_BOTH, FALSE);
 }
 
-void set_font_size(SHORT newWidth, SHORT newHeight) {
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+void ConhostController::set_font_size(SHORT newWidth, SHORT newHeight) {
 
     // ---------------------------
     CONSOLE_FONT_INFOEX cfi;
@@ -115,25 +130,23 @@ void set_font_size(SHORT newWidth, SHORT newHeight) {
     wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
     // ---------------------------
 
-    SetCurrentConsoleFontEx(hOut, FALSE, &cfi);
+    SetCurrentConsoleFontEx(m_hOut, FALSE, &cfi);
 }
 
 
 
-COORD font_size() {
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+COORD ConhostController::font_size() {
     CONSOLE_FONT_INFO currentFont;
-    GetCurrentConsoleFont(hOut, FALSE, &currentFont);
-    COORD currentFontSize = GetConsoleFontSize(hOut, currentFont.nFont);
+    GetCurrentConsoleFont(m_hOut, FALSE, &currentFont);
+    COORD currentFontSize = GetConsoleFontSize(m_hOut, currentFont.nFont);
     return currentFontSize;
 }
 
-void print_console_debug_info() {
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+void ConhostController::print_console_debug_info() {
 
     // retrieve buffer info
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);
+    GetConsoleScreenBufferInfo(m_hOut, &scrBufferInfo);
 
     // get Win info
     RECT r;
@@ -143,8 +156,8 @@ void print_console_debug_info() {
 
     // get font info
     CONSOLE_FONT_INFO currentFont;
-    GetCurrentConsoleFont(hOut, FALSE, &currentFont);
-    COORD currentFontSize = GetConsoleFontSize(hOut, currentFont.nFont);
+    GetCurrentConsoleFont(m_hOut, FALSE, &currentFont);
+    COORD currentFontSize = GetConsoleFontSize(m_hOut, currentFont.nFont);
     int currentFontWidth = currentFontSize.X;
     int currentFontHeight = currentFontSize.Y;
 
@@ -154,9 +167,8 @@ void print_console_debug_info() {
     std::cout << "Largest buffer size: " << scrBufferInfo.dwMaximumWindowSize.X << " x " << scrBufferInfo.dwMaximumWindowSize.Y << std::endl;
 }
 
-COORD screen_size() {
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+COORD ConhostController::screen_size() {
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);
+    GetConsoleScreenBufferInfo(m_hOut, &scrBufferInfo);
     return scrBufferInfo.dwSize;
 }

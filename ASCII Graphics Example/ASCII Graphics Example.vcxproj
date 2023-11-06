@@ -130,11 +130,12 @@
   <ItemGroup>
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="WinControl.cpp" />
+    <ClCompile Include="WinController.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Factory.h" />
     <ClInclude Include="Frame.h" />
-    <ClInclude Include="WinControl.h" />
+    <ClInclude Include="WinController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

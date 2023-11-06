@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 class Shape {
 public:
 	virtual void draw(std::vector<std::vector<char>>* frame_data);
@@ -19,9 +21,7 @@ public:
 
 	void display();
 
-	void draw(Shape s) {
-		s.draw(&m_frame_data);
-	}
+	void draw(Shape s);
 
 	void clear();
 };

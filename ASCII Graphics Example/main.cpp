@@ -1,5 +1,6 @@
 
-#include "WinControl.h"
+#include "WinController.h"
+#include "Factory.h"
 
 #include <iostream>
 #include <windows.h>
@@ -14,18 +15,19 @@ int main() {
     // get HWND to console window
     HWND console = GetConsoleWindow();
     // get handle to console window
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    Factory fac;
+    std::unique_ptr<WinController> winCon = fac.create_winController();
 
     // maximize
-    ShowWindow(console, SW_MAXIMIZE);
+    winCon->maximize();
 
     //set_font_size(8,8);
     //set_up_buffer();
-    set_resolution(284, 67);
+    winCon->set_resolution(284, 67);
 
     // retrieve buffer info
-    CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);
+    /*CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
+    GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);*/
     
     // print info
     //std::cout << std::endl;
