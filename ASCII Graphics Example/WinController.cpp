@@ -21,6 +21,7 @@ short ConhostController::canvas_height()
     return info.dwSize.Y;
 }
 
+
 void ConhostController::set_up_buffer() {
 
     // new buffer size
@@ -58,11 +59,10 @@ void ConhostController::set_up_buffer() {
 }
 
 void ConhostController::set_resolution(SHORT width, SHORT height) {
-    HWND console = GetConsoleWindow();
 
     // get Win info
     RECT clientRect;
-    GetClientRect(console, &clientRect);
+    GetClientRect(m_consoleWin, &clientRect);
     int clientWidth = clientRect.right - clientRect.left;
     int clientHeight = clientRect.bottom - clientRect.top;
 
@@ -114,7 +114,7 @@ void ConhostController::set_resolution(SHORT width, SHORT height) {
     std::cout << "Char size * buffer size: " << charWidth * scrBufferInfo.dwSize.X << " x " << charHeight * scrBufferInfo.dwSize.Y << std::endl;
 
     // hide scroll bars
-    ShowScrollBar(console, SB_BOTH, FALSE);
+    ShowScrollBar(m_consoleWin, SB_BOTH, FALSE);
 }
 
 void ConhostController::set_font_size(SHORT newWidth, SHORT newHeight) {
@@ -142,7 +142,7 @@ COORD ConhostController::font_size() {
     return currentFontSize;
 }
 
-void ConhostController::print_console_debug_info() {
+void ConhostController::print_debug_info() {
 
     // retrieve buffer info
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
@@ -150,7 +150,7 @@ void ConhostController::print_console_debug_info() {
 
     // get Win info
     RECT r;
-    GetWindowRect(GetConsoleWindow(), &r);
+    GetWindowRect(m_consoleWin, &r);
     int winWidth = r.right - r.left;
     int winHeight = r.bottom - r.top;
 

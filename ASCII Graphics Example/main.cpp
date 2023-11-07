@@ -9,7 +9,7 @@
 
 void print_screen_border();
 void print_buffer_debug_grid();
-bool enable_virtual_terminal();
+int enable_virtual_terminal();
 
 int main() {
     // get HWND to console window
@@ -137,7 +137,7 @@ void print_buffer_debug_grid() {
     }
 }
 
-bool enable_virtual_terminal() {
+int enable_virtual_terminal() {
     // Set output mode to handle virtual terminal sequences
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     if (hOut == INVALID_HANDLE_VALUE)
