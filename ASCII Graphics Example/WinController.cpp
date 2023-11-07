@@ -3,18 +3,18 @@
 #include <iostream>
 #include <windows.h>
 
-void ConhostController::maximize() {
+void ConhostController::impl_maximize() {
     ShowWindow(m_consoleWin, SW_MAXIMIZE);
 }
 
-short ConhostController::canvas_width()
+short ConhostController::impl_canvas_width()
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(m_hOut, &info);
     return info.dwSize.X;
 }
 
-short ConhostController::canvas_height()
+short ConhostController::impl_canvas_height()
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(m_hOut, &info);
@@ -22,7 +22,7 @@ short ConhostController::canvas_height()
 }
 
 
-void ConhostController::set_up_buffer() {
+void ConhostController::impl_set_up_buffer() {
 
     // new buffer size
     COORD newBufferSize;
@@ -58,7 +58,7 @@ void ConhostController::set_up_buffer() {
     }
 }
 
-void ConhostController::set_resolution(SHORT width, SHORT height) {
+void ConhostController::impl_set_resolution(SHORT width, SHORT height) {
 
     // get Win info
     RECT clientRect;
@@ -117,7 +117,7 @@ void ConhostController::set_resolution(SHORT width, SHORT height) {
     ShowScrollBar(m_consoleWin, SB_BOTH, FALSE);
 }
 
-void ConhostController::set_font_size(SHORT newWidth, SHORT newHeight) {
+void ConhostController::impl_set_font_size(SHORT newWidth, SHORT newHeight) {
 
     // ---------------------------
     CONSOLE_FONT_INFOEX cfi;
@@ -135,14 +135,14 @@ void ConhostController::set_font_size(SHORT newWidth, SHORT newHeight) {
 
 
 
-COORD ConhostController::font_size() {
+COORD ConhostController::impl_font_size() {
     CONSOLE_FONT_INFO currentFont;
     GetCurrentConsoleFont(m_hOut, FALSE, &currentFont);
     COORD currentFontSize = GetConsoleFontSize(m_hOut, currentFont.nFont);
     return currentFontSize;
 }
 
-void ConhostController::print_debug_info() {
+void ConhostController::impl_print_debug_info() {
 
     // retrieve buffer info
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
@@ -167,8 +167,47 @@ void ConhostController::print_debug_info() {
     std::cout << "Largest buffer size: " << scrBufferInfo.dwMaximumWindowSize.X << " x " << scrBufferInfo.dwMaximumWindowSize.Y << std::endl;
 }
 
-COORD ConhostController::screen_size() {
+COORD ConhostController::impl_screen_size() {
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
     GetConsoleScreenBufferInfo(m_hOut, &scrBufferInfo);
     return scrBufferInfo.dwSize;
+}
+
+int ConhostController::impl_enable_virtual_terminal() {
+    // Set output mode to handle virtual terminal sequences
+    
+
+    DWORD dwOriginalOutMode = 0;
+    DWORD dwOriginalInMode = 0;
+    if (!GetConsoleMode(m_hOut, &dwOriginalOutMode))
+    {
+        return false;
+    }
+    if (!GetConsoleMode(m_hIn, &dwOriginalInMode))
+    {
+        return false;
+    }
+
+    DWORD dwRequestedOutModes = ENABLE_VIRTUAL_TERMINAL_PROCESSING | DISABLE_NEWLINE_AUTO_RETURN;
+    DWORD dwRequestedInModes = ENABLE_VIRTUAL_TERMINAL_INPUT;
+
+    DWORD dwOutMode = dwOriginalOutMode | dwRequestedOutModes;
+    if (!SetConsoleMode(m_hOut, dwOutMode))
+    {
+        // we failed to set both modes, try to step down mode gracefully.
+        dwRequestedOutModes = ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        dwOutMode = dwOriginalOutMode | dwRequestedOutModes;
+        if (!SetConsoleMode(m_hOut, dwOutMode))
+        {
+            // Failed to set any VT mode, can't do anything here.
+            return -1;
+        }
+    }
+
+    DWORD dwInMode = dwOriginalInMode | dwRequestedInModes;
+    if (!SetConsoleMode(m_hIn, dwInMode))
+    {
+        // Failed to set VT input mode, can't do anything here.
+        return -1;
+    }
 }

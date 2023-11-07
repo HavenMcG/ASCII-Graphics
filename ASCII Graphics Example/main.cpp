@@ -3,7 +3,7 @@
 #include "Factory.h"
 
 #include <iostream>
-#include <windows.h>
+//#include <windows.h>
 
 #include <string>
 
@@ -15,15 +15,13 @@ int main() {
     // get HWND to console window
     HWND console = GetConsoleWindow();
     // get handle to console window
-    Factory fac;
-    std::unique_ptr<WinController> winCon = fac.create_winController();
 
     // maximize
-    winCon->maximize();
+    ConhostController::maximize();
 
     //set_font_size(8,8);
     //set_up_buffer();
-    winCon->set_resolution(284, 67);
+    ConhostController::set_resolution(284, 67);
 
     // retrieve buffer info
     /*CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
@@ -52,7 +50,7 @@ int main() {
     );*/
 
 
-    enable_virtual_terminal();
+    ConhostController::enable_virtual_terminal();
 
     std::cout << "\033[1;31mred text\033[0m \033[1;32mgreen text\033[0m \033[38;2;255;82;197mpink text\033[0m" << std::endl;
     std::cout << "\033[38;2;255;100;0mTRUECOLOR\x1b[0m" << std::endl;
@@ -137,50 +135,3 @@ void print_buffer_debug_grid() {
     }
 }
 
-int enable_virtual_terminal() {
-    // Set output mode to handle virtual terminal sequences
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (hOut == INVALID_HANDLE_VALUE)
-    {
-        return false;
-    }
-    HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
-    if (hIn == INVALID_HANDLE_VALUE)
-    {
-        return false;
-    }
-
-    DWORD dwOriginalOutMode = 0;
-    DWORD dwOriginalInMode = 0;
-    if (!GetConsoleMode(hOut, &dwOriginalOutMode))
-    {
-        return false;
-    }
-    if (!GetConsoleMode(hIn, &dwOriginalInMode))
-    {
-        return false;
-    }
-
-    DWORD dwRequestedOutModes = ENABLE_VIRTUAL_TERMINAL_PROCESSING | DISABLE_NEWLINE_AUTO_RETURN;
-    DWORD dwRequestedInModes = ENABLE_VIRTUAL_TERMINAL_INPUT;
-
-    DWORD dwOutMode = dwOriginalOutMode | dwRequestedOutModes;
-    if (!SetConsoleMode(hOut, dwOutMode))
-    {
-        // we failed to set both modes, try to step down mode gracefully.
-        dwRequestedOutModes = ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-        dwOutMode = dwOriginalOutMode | dwRequestedOutModes;
-        if (!SetConsoleMode(hOut, dwOutMode))
-        {
-            // Failed to set any VT mode, can't do anything here.
-            return -1;
-        }
-    }
-
-    DWORD dwInMode = dwOriginalInMode | dwRequestedInModes;
-    if (!SetConsoleMode(hIn, dwInMode))
-    {
-        // Failed to set VT input mode, can't do anything here.
-        return -1;
-    }
-}
