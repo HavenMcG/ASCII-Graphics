@@ -3,16 +3,16 @@
 
 class ConhostController {
 public:
-	static void maximize() { instance().impl_maximize(); }
-	static short canvas_width() { return instance().impl_canvas_width(); }
-	static short canvas_height() { return instance().impl_canvas_width(); }
-	static void set_up_buffer() { instance().impl_set_up_buffer(); }
-	static void set_font_size(short width, short height) { instance().impl_set_font_size(width, height); }
-	static void set_resolution(short width, short height) { instance().impl_set_resolution(width, height); }
-	static void print_debug_info() { instance().impl_print_debug_info(); }
-	static COORD font_size() { return instance().impl_font_size(); }
-	static COORD screen_size() { return instance().impl_screen_size(); }
-	static int enable_virtual_terminal() { return instance().impl_enable_virtual_terminal(); }
+	static void maximize() { instance().maximize_impl(); }
+	static short canvas_width() { return instance().canvas_width_impl(); }
+	static short canvas_height() { return instance().canvas_width_impl(); }
+	static void set_up_buffer() { instance().set_up_buffer_impl(); }
+	static void set_font_size(short width, short height) { instance().set_font_size_impl(width, height); }
+	static void set_resolution(short width, short height) { instance().set_resolution_impl(width, height); }
+	static void print_debug_info() { instance().print_debug_info_impl(); }
+	static COORD font_size() { return instance().font_size_impl(); }
+	static COORD screen_size() { return instance().screen_size_impl(); }
+	static int enable_virtual_terminal() { return instance().enable_virtual_terminal_impl(); }
 
 	ConhostController(const ConhostController&) = delete;
 
@@ -22,18 +22,18 @@ private:
 		return instance;
 	}
 
-	void impl_set_resolution(SHORT width, SHORT height);
-	void impl_maximize();
-	short impl_canvas_width();
-	short impl_canvas_height();
+	void set_resolution_impl(SHORT width, SHORT height);
+	void maximize_impl();
+	short canvas_width_impl();
+	short canvas_height_impl();
 
-	void impl_set_up_buffer();
-	void impl_set_font_size(SHORT width, SHORT height);
+	void set_up_buffer_impl();
+	void set_font_size_impl(SHORT width, SHORT height);
 
-	void impl_print_debug_info();
-	COORD impl_font_size();
-	COORD impl_screen_size();
-	int impl_enable_virtual_terminal();
+	void print_debug_info_impl();
+	COORD font_size_impl();
+	COORD screen_size_impl();
+	int enable_virtual_terminal_impl();
 
 	ConhostController() {
 		m_hOut = GetStdHandle(STD_OUTPUT_HANDLE);

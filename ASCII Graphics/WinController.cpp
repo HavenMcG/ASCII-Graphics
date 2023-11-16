@@ -3,18 +3,18 @@
 #include <iostream>
 #include <windows.h>
 
-void ConhostController::impl_maximize() {
+void ConhostController::maximize_impl() {
     ShowWindow(m_consoleWin, SW_MAXIMIZE);
 }
 
-short ConhostController::impl_canvas_width()
+short ConhostController::canvas_width_impl()
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(m_hOut, &info);
     return info.dwSize.X;
 }
 
-short ConhostController::impl_canvas_height()
+short ConhostController::canvas_height_impl()
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(m_hOut, &info);
@@ -22,7 +22,7 @@ short ConhostController::impl_canvas_height()
 }
 
 
-void ConhostController::impl_set_up_buffer() {
+void ConhostController::set_up_buffer_impl() {
 
     // new buffer size
     COORD newBufferSize;
@@ -58,7 +58,7 @@ void ConhostController::impl_set_up_buffer() {
     }
 }
 
-void ConhostController::impl_set_resolution(SHORT width, SHORT height) {
+void ConhostController::set_resolution_impl(SHORT width, SHORT height) {
 
     // get Win info
     RECT clientRect;
@@ -117,7 +117,7 @@ void ConhostController::impl_set_resolution(SHORT width, SHORT height) {
     ShowScrollBar(m_consoleWin, SB_BOTH, FALSE);
 }
 
-void ConhostController::impl_set_font_size(SHORT newWidth, SHORT newHeight) {
+void ConhostController::set_font_size_impl(SHORT newWidth, SHORT newHeight) {
 
     // ---------------------------
     CONSOLE_FONT_INFOEX cfi;
@@ -135,14 +135,14 @@ void ConhostController::impl_set_font_size(SHORT newWidth, SHORT newHeight) {
 
 
 
-COORD ConhostController::impl_font_size() {
+COORD ConhostController::font_size_impl() {
     CONSOLE_FONT_INFO currentFont;
     GetCurrentConsoleFont(m_hOut, FALSE, &currentFont);
     COORD currentFontSize = GetConsoleFontSize(m_hOut, currentFont.nFont);
     return currentFontSize;
 }
 
-void ConhostController::impl_print_debug_info() {
+void ConhostController::print_debug_info_impl() {
 
     // retrieve buffer info
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
@@ -167,13 +167,13 @@ void ConhostController::impl_print_debug_info() {
     std::cout << "Largest buffer size: " << scrBufferInfo.dwMaximumWindowSize.X << " x " << scrBufferInfo.dwMaximumWindowSize.Y << std::endl;
 }
 
-COORD ConhostController::impl_screen_size() {
+COORD ConhostController::screen_size_impl() {
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
     GetConsoleScreenBufferInfo(m_hOut, &scrBufferInfo);
     return scrBufferInfo.dwSize;
 }
 
-int ConhostController::impl_enable_virtual_terminal() {
+int ConhostController::enable_virtual_terminal_impl() {
     // Set output mode to handle virtual terminal sequences
     
 
