@@ -5,5 +5,5 @@
 
 int main()
 {
-    system("conhost.exe -- ../x64/Debug/ASCII Graphics Example.exe");
+    system("conhost.exe -- ../x64/Debug/ASCII Graphics.exe");
 }

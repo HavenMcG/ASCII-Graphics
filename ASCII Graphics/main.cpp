@@ -1,5 +1,5 @@
 
-#include "WinController.h"
+#include "ConhostController.h"
 #include "Factory.h"
 
 #include <iostream>
@@ -9,47 +9,10 @@
 
 void print_screen_border();
 void print_buffer_debug_grid();
-int enable_virtual_terminal();
 
 int main() {
-    // get HWND to console window
-    HWND console = GetConsoleWindow();
-    // get handle to console window
-
-    // maximize
     ConhostController::maximize();
-
-    //set_font_size(8,8);
-    //set_up_buffer();
     ConhostController::set_resolution(284, 67);
-
-    // retrieve buffer info
-    /*CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);*/
-    
-    // print info
-    //std::cout << std::endl;
-    //std::cout << "(main) Buffer Size : " << scrBufferInfo.dwSize.X << " x " << scrBufferInfo.dwSize.Y << std::endl;
-
-    //print_buffer_debug_grid();
-
-    /*CHAR_INFO ci;
-    ci.Char.UnicodeChar = 'H';
-    ci.Attributes = FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
-
-    CHAR_INFO screen[] = { ci };
-    int x = 0;
-    int y = 0;
-    SMALL_RECT r{ x,y,screen_size().X-1-x,screen_size().Y-1-y };
-    WriteConsoleOutput(
-        hOut,
-        screen,
-        COORD{1,1},
-        COORD{0,0},
-        &r
-    );*/
-
-
     ConhostController::enable_virtual_terminal();
 
     std::cout << "\033[1;31mred text\033[0m \033[1;32mgreen text\033[0m \033[38;2;255;82;197mpink text\033[0m" << std::endl;
@@ -80,6 +43,13 @@ int main() {
     }
 
     std::cout << "\n";
+    std::cout << "\033[38;2;255;82;197m";
+    std::cout << "test" << std::endl;
+
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD written;
+    WriteConsoleOutputCharacter(hOut, L"test2", 5, COORD{ 0,0 }, &written);
+    std::cout << "xx\n";
 
     std::cin.get();
 }
