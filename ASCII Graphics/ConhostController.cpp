@@ -3,21 +3,53 @@
 #include <iostream>
 #include <windows.h>
 
+static HANDLE s_hOut;
+static HANDLE s_hIn;
+static HWND s_consoleWin;
+
+Coord to_Coord(COORD c) {
+    return Coord{ c.X, c.Y };
+}
+
+COORD to_COORD(Coord c) {
+    return COORD{ c.x, c.y };
+}
+
+ConhostController::ConhostController() {
+    s_hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    s_hIn = GetStdHandle(STD_INPUT_HANDLE);
+    s_consoleWin = GetConsoleWindow();
+    if (s_hOut == INVALID_HANDLE_VALUE) {
+        // TODO: throw suitable exception
+    }
+    if (s_hIn == INVALID_HANDLE_VALUE) {
+        // TODO: throw suitable exception
+    }
+
+    enable_virtual_terminal_impl(); // should this be here?
+}
+
 void ConhostController::maximize_impl() {
-    ShowWindow(m_consoleWin, SW_MAXIMIZE);
+    ShowWindow(s_consoleWin, SW_MAXIMIZE);
+}
+
+Coord ConhostController::canvas_size_impl() {
+    CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
+    GetConsoleScreenBufferInfo(s_hOut, &scrBufferInfo);
+    return to_Coord(scrBufferInfo.dwSize);
 }
 
 short ConhostController::canvas_width_impl()
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(m_hOut, &info);
+    GetConsoleScreenBufferInfo(s_hOut, &info);
     return info.dwSize.X;
 }
 
 short ConhostController::canvas_height_impl()
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(m_hOut, &info);
+    GetConsoleScreenBufferInfo(s_hOut, &info);
     return info.dwSize.Y;
 }
 
@@ -26,19 +58,19 @@ void ConhostController::set_up_buffer_impl() {
 
     // new buffer size
     COORD newBufferSize;
-    newBufferSize.X = GetLargestConsoleWindowSize(m_hOut).X;
-    newBufferSize.Y = GetLargestConsoleWindowSize(m_hOut).Y;
+    newBufferSize.X = GetLargestConsoleWindowSize(s_hOut).X;
+    newBufferSize.Y = GetLargestConsoleWindowSize(s_hOut).Y;
 
     // shrink the window to prevent error
     SMALL_RECT rect = { 0,0,0,0 };
-    if (!SetConsoleWindowInfo(m_hOut, TRUE, &rect)) {
+    if (!SetConsoleWindowInfo(s_hOut, TRUE, &rect)) {
         std::cout << "shrinking window size failed: " << GetLastError() << std::endl;
         std::cin.get(); // pause
         exit(0);
     }
 
     // set new buffer size
-    if (!SetConsoleScreenBufferSize(m_hOut, newBufferSize)) {
+    if (!SetConsoleScreenBufferSize(s_hOut, newBufferSize)) {
         std::cout << "SetConsoleScreenBufferSize() failed: " << GetLastError() << std::endl;
         std::cin.get(); // pause
         exit(0);
@@ -46,23 +78,23 @@ void ConhostController::set_up_buffer_impl() {
 
     // now restore the window again
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(m_hOut, &scrBufferInfo);
+    GetConsoleScreenBufferInfo(s_hOut, &scrBufferInfo);
     SHORT maxWindowX = scrBufferInfo.dwMaximumWindowSize.X - 1;
     SHORT maxWindowY = scrBufferInfo.dwMaximumWindowSize.Y - 1;
     //std::cout << "Restore dimensions: " << maxWindowX << " x " << maxWindowY << std::endl; // why 67??
     rect = { 0,0,maxWindowX,maxWindowY };
-    if (!SetConsoleWindowInfo(m_hOut, TRUE, &rect)) {
+    if (!SetConsoleWindowInfo(s_hOut, TRUE, &rect)) {
         std::cout << "restoring window size failed: " << GetLastError() << std::endl;
         std::cin.get(); // pause
         exit(0);
     }
 }
 
-void ConhostController::set_resolution_impl(SHORT width, SHORT height) {
+void ConhostController::set_resolution_impl(short width, short height) {
 
     // get Win info
     RECT clientRect;
-    GetClientRect(m_consoleWin, &clientRect);
+    GetClientRect(s_consoleWin, &clientRect);
     int clientWidth = clientRect.right - clientRect.left;
     int clientHeight = clientRect.bottom - clientRect.top;
 
@@ -73,12 +105,12 @@ void ConhostController::set_resolution_impl(SHORT width, SHORT height) {
     set_font_size(charWidth, charHeight);
 
     // verify that it worked
-    std::cout << "Actual font size: " << font_size().X << " x " << font_size().Y << std::endl;
+    std::cout << "Actual font size: " << font_size().x << " x " << font_size().y << std::endl;
 
     // shrink the window to prevent error
     SMALL_RECT rect = { 0,0,0,0 };
 
-    if (!SetConsoleWindowInfo(m_hOut, TRUE, &rect)) {
+    if (!SetConsoleWindowInfo(s_hOut, TRUE, &rect)) {
         std::cout << "shrinking window size failed: " << GetLastError() << std::endl;
         std::cin.get(); // pause
         exit(0);
@@ -86,14 +118,14 @@ void ConhostController::set_resolution_impl(SHORT width, SHORT height) {
 
     // set new buffer size
     COORD newBufferSize = { width, height };
-    if (!SetConsoleScreenBufferSize(m_hOut, newBufferSize)) {
+    if (!SetConsoleScreenBufferSize(s_hOut, newBufferSize)) {
         std::cout << "SetConsoleScreenBufferSize() failed: " << GetLastError() << std::endl;
         std::cin.get(); // pause
         exit(0);
     }
     // retrieve buffer info
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(m_hOut, &scrBufferInfo);
+    GetConsoleScreenBufferInfo(s_hOut, &scrBufferInfo);
     std::cout << "Desired buffer size: " << width << " x " << height << std::endl;
     std::cout << "Actual buffer size: " << scrBufferInfo.dwSize.X << " x " << scrBufferInfo.dwSize.Y << std::endl;
 
@@ -102,7 +134,7 @@ void ConhostController::set_resolution_impl(SHORT width, SHORT height) {
     SHORT maxWindowY = scrBufferInfo.dwMaximumWindowSize.Y - 1;
     //std::cout << "Restore dimensions: " << maxWindowX << " x " << maxWindowY << std::endl; // why 67??
     rect = { 0,0,maxWindowX,maxWindowY };
-    if (!SetConsoleWindowInfo(m_hOut, TRUE, &rect)) {
+    if (!SetConsoleWindowInfo(s_hOut, TRUE, &rect)) {
         std::cout << "restoring window size failed: " << GetLastError() << std::endl;
         std::cin.get(); // pause
         exit(0);
@@ -114,10 +146,10 @@ void ConhostController::set_resolution_impl(SHORT width, SHORT height) {
     std::cout << "Char size * buffer size: " << charWidth * scrBufferInfo.dwSize.X << " x " << charHeight * scrBufferInfo.dwSize.Y << std::endl;
 
     // hide scroll bars
-    ShowScrollBar(m_consoleWin, SB_BOTH, FALSE);
+    ShowScrollBar(s_consoleWin, SB_BOTH, FALSE);
 }
 
-void ConhostController::set_font_size_impl(SHORT newWidth, SHORT newHeight) {
+void ConhostController::set_font_size_impl(short newWidth, short newHeight) {
 
     // ---------------------------
     CONSOLE_FONT_INFOEX cfi;
@@ -130,34 +162,34 @@ void ConhostController::set_font_size_impl(SHORT newWidth, SHORT newHeight) {
     wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
     // ---------------------------
 
-    SetCurrentConsoleFontEx(m_hOut, FALSE, &cfi);
+    SetCurrentConsoleFontEx(s_hOut, FALSE, &cfi);
 }
 
 
 
-COORD ConhostController::font_size_impl() {
+Coord ConhostController::font_size_impl() {
     CONSOLE_FONT_INFO currentFont;
-    GetCurrentConsoleFont(m_hOut, FALSE, &currentFont);
-    COORD currentFontSize = GetConsoleFontSize(m_hOut, currentFont.nFont);
-    return currentFontSize;
+    GetCurrentConsoleFont(s_hOut, FALSE, &currentFont);
+    COORD currentFontSize = GetConsoleFontSize(s_hOut, currentFont.nFont);
+    return to_Coord(currentFontSize);
 }
 
 void ConhostController::print_debug_info_impl() {
 
     // retrieve buffer info
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(m_hOut, &scrBufferInfo);
+    GetConsoleScreenBufferInfo(s_hOut, &scrBufferInfo);
 
     // get Win info
     RECT r;
-    GetWindowRect(m_consoleWin, &r);
+    GetWindowRect(s_consoleWin, &r);
     int winWidth = r.right - r.left;
     int winHeight = r.bottom - r.top;
 
     // get font info
     CONSOLE_FONT_INFO currentFont;
-    GetCurrentConsoleFont(m_hOut, FALSE, &currentFont);
-    COORD currentFontSize = GetConsoleFontSize(m_hOut, currentFont.nFont);
+    GetCurrentConsoleFont(s_hOut, FALSE, &currentFont);
+    COORD currentFontSize = GetConsoleFontSize(s_hOut, currentFont.nFont);
     int currentFontWidth = currentFontSize.X;
     int currentFontHeight = currentFontSize.Y;
 
@@ -167,11 +199,7 @@ void ConhostController::print_debug_info_impl() {
     std::cout << "Largest buffer size: " << scrBufferInfo.dwMaximumWindowSize.X << " x " << scrBufferInfo.dwMaximumWindowSize.Y << std::endl;
 }
 
-COORD ConhostController::screen_size_impl() {
-    CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(m_hOut, &scrBufferInfo);
-    return scrBufferInfo.dwSize;
-}
+
 
 int ConhostController::enable_virtual_terminal_impl() {
     // Set output mode to handle virtual terminal sequences
@@ -179,11 +207,11 @@ int ConhostController::enable_virtual_terminal_impl() {
 
     DWORD dwOriginalOutMode = 0;
     DWORD dwOriginalInMode = 0;
-    if (!GetConsoleMode(m_hOut, &dwOriginalOutMode))
+    if (!GetConsoleMode(s_hOut, &dwOriginalOutMode))
     {
         return false;
     }
-    if (!GetConsoleMode(m_hIn, &dwOriginalInMode))
+    if (!GetConsoleMode(s_hIn, &dwOriginalInMode))
     {
         return false;
     }
@@ -192,12 +220,12 @@ int ConhostController::enable_virtual_terminal_impl() {
     DWORD dwRequestedInModes = ENABLE_VIRTUAL_TERMINAL_INPUT;
 
     DWORD dwOutMode = dwOriginalOutMode | dwRequestedOutModes;
-    if (!SetConsoleMode(m_hOut, dwOutMode))
+    if (!SetConsoleMode(s_hOut, dwOutMode))
     {
         // we failed to set both modes, try to step down mode gracefully.
         dwRequestedOutModes = ENABLE_VIRTUAL_TERMINAL_PROCESSING;
         dwOutMode = dwOriginalOutMode | dwRequestedOutModes;
-        if (!SetConsoleMode(m_hOut, dwOutMode))
+        if (!SetConsoleMode(s_hOut, dwOutMode))
         {
             // Failed to set any VT mode, can't do anything here.
             return -1;
@@ -205,9 +233,48 @@ int ConhostController::enable_virtual_terminal_impl() {
     }
 
     DWORD dwInMode = dwOriginalInMode | dwRequestedInModes;
-    if (!SetConsoleMode(m_hIn, dwInMode))
+    if (!SetConsoleMode(s_hIn, dwInMode))
     {
         // Failed to set VT input mode, can't do anything here.
         return -1;
     }
+}
+
+void ConhostController::display_impl(Frame f) {
+    move_cursor_to({ 0,0 });
+    FrameData fd = f.frame_data();
+    for (int row = 0; row < f.width(); ++row) {
+        for (int col = 0; col < f.height(); ++col) {
+
+            // what we really need to do is check if frame is smaller than buffer and if so move the cursor appropriately
+            // 
+            // Also need to move cursor to start when we start
+
+            Pixel px = fd[col][row];
+
+            // Set background color
+            //set_bcolor(px.background);
+
+            // Set foreground color
+            //set_fcolor(px.foreground);
+
+            // Print the character from the 's' string
+            std::cout << px.character;
+
+            // Reset the colors
+            std::cout << "\033[0m";
+        }
+    }
+}
+
+void ConhostController::set_fcolor_impl(Color c) {
+    std::cout << "\033[38;2;" << c.r << ";" << c.g << ";" << c.b << "m";
+}
+
+void ConhostController::set_bcolor_impl(Color c) {
+    std::cout << "\033[48;2;" << c.r << ";" << c.g << ";" << c.b << "m";
+}
+
+void ConhostController::move_cursor_to_impl(Coord new_pos) {
+    SetConsoleCursorPosition(s_hOut,to_COORD(new_pos));
 }

@@ -1,9 +1,7 @@
 
 #include "ConhostController.h"
-#include "Factory.h"
 
 #include <iostream>
-//#include <windows.h>
 
 #include <string>
 
@@ -11,9 +9,10 @@ void print_screen_border();
 void print_buffer_debug_grid();
 
 int main() {
-    ConhostController::maximize();
-    ConhostController::set_resolution(284, 67);
-    ConhostController::enable_virtual_terminal();
+    using CC = ConhostController;
+
+    CC::maximize();
+    CC::set_resolution(284, 67);
 
     std::cout << "\033[1;31mred text\033[0m \033[1;32mgreen text\033[0m \033[38;2;255;82;197mpink text\033[0m" << std::endl;
     std::cout << "\033[38;2;255;100;0mTRUECOLOR\x1b[0m" << std::endl;
@@ -46,23 +45,18 @@ int main() {
     std::cout << "\033[38;2;255;82;197m";
     std::cout << "test" << std::endl;
 
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    DWORD written;
-    WriteConsoleOutputCharacter(hOut, L"test2", 5, COORD{ 0,0 }, &written);
-    std::cout << "xx\n";
+    std::cin.get();
+
+    Frame blank{CC::canvas_size().x, CC::canvas_size().y};
+    CC::display(blank);
 
     std::cin.get();
 }
 
 void print_screen_border() {
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    // retrieve buffer info
-    CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);
-
-    int screenHeight = scrBufferInfo.dwSize.Y - 2;
-    int screenWidth = scrBufferInfo.dwSize.X;
+    int screenHeight = ConhostController::canvas_size().y - 2;
+    int screenWidth = ConhostController::canvas_size().x;
 
     for (int row = 0; row < screenHeight; ++row) {
         for (int col = 0; col < screenWidth; ++col) {
@@ -80,14 +74,9 @@ void print_screen_border() {
 }
 
 void print_buffer_debug_grid() {
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    // retrieve buffer info
-    CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(hOut, &scrBufferInfo);
-
-    int screenHeight = scrBufferInfo.dwSize.Y - 2;
-    int screenWidth = scrBufferInfo.dwSize.X;
+    int screenHeight = ConhostController::canvas_size().y - 2;
+    int screenWidth = ConhostController::canvas_size().x;
 
     for (int row = 0; row < screenHeight; ++row) {
         for (int col = 0; col < screenWidth; ++col) {
