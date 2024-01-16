@@ -42,7 +42,7 @@ void temp_display_image(std::string filepath) {
     ifs.seekg(2);
     int file_size;
     ifs.read((char*)&file_size, 4);
-    std::cout << file_size << std::endl;]
+    std::cout << file_size << std::endl;
 
     ifs.seekg(10);
     int pixels_beginning;
