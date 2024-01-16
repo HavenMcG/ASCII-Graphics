@@ -8,37 +8,41 @@
 void print_screen_border();
 void print_buffer_debug_grid();
 void color_test();
+void temp_display_image(std::string filepath);
 
 int main() {
     using CC = ConhostController;
     CC::maximize();
     //CC::set_resolution(284, 67);
-    CC::set_resolution(200, 100);
+    //CC::set_resolution(800, 600);
+    /*CC::set_font_size(2, 2);
+    CC::set_buffer_size(800, 600);
+    CC::set_bufferwindow_size(799, 449);*/
+    CC::set_resolution(400, 300);
 
-    //std::cout << CC::log();
-    //color_test();
-    CC::set_fcolor(112, 250, 202);
-    CC::set_bcolor(125, 0, 0);
-    std::cout << "test\n";
-    std::cout << "llllllll\n";
-    CC::reset_colors();
-    std::cout << "test2222\n";
-    Color pink{ 255,82,197 };
-    CC::set_fcolor(pink);
-    CC::set_bcolor(255, 255, 255);
-    std::cout << "pink text\n";
-    CC::reset_colors();
-    std::cout << "\033[38;2;255;100;0mTRUECOLOR\x1b[0m" << std::endl;
+    //print_screen_border();
+    temp_display_image("../seasidegarden.bmp");
+    //CC::write("Hello World!");
     
+    // Pause
+    std::cin.get();
 
+    //Frame blank{CC::canvas_size().x, CC::canvas_size().y};
+    //CC::display(blank);
+
+    //std::cin.get();
+}
+
+void temp_display_image(std::string filepath) {
+    using CC = ConhostController;
     std::ifstream ifs;
-    ifs.open("../test01.bmp", std::ios::binary);
+    ifs.open(filepath, std::ios::binary);
     if (!ifs) std::cout << "error\n";
 
     ifs.seekg(2);
     int file_size;
     ifs.read((char*)&file_size, 4);
-    std::cout << file_size << std::endl;
+    std::cout << file_size << std::endl;]
 
     ifs.seekg(10);
     int pixels_beginning;
@@ -55,40 +59,42 @@ int main() {
     ifs.read((char*)&image_height, sizeof(short));
     std::cout << image_height << std::endl;
 
-
     ifs.seekg(pixels_beginning);
 
     std::vector<std::vector<Color>> image;
+    std::vector<Color> v{ static_cast<uint64_t>(image_width) };
+    for (short row = 0; row < image_height; ++row) image.push_back(v);
 
     unsigned char R, G, B;
-    /*for (int i = 0; i < file_size; i += 3)
-    {
-        ifs.read((char*)&B, sizeof(unsigned char));
-        ifs.read((char*)&G, sizeof(unsigned char));
-        ifs.read((char*)&R, sizeof(unsigned char));
 
-        std::cout << "R: " << (int)R << " G: " << (int)G << " B: " << (int)B << "\n";
-    }*/
-
+    // read pixel data
     for (short row = 0; row < image_height; ++row) {
         for (short col = 0; col < image_width; ++col) {
             ifs.read((char*)&B, sizeof(unsigned char));
             ifs.read((char*)&G, sizeof(unsigned char));
             ifs.read((char*)&R, sizeof(unsigned char));
-            
-            CC::move_cursor_to(Coord{ image_width - col - 1, image_height - row - 1 });
-            CC::set_fcolor(R, G, B);
-            std::cout << (char)219;
+
+            image[image_height - row - 1][col] = Color{ R,G,B };
         }
-        std::cout << std::endl;
     }
     ifs.close();
-    std::cin.get();
 
-    //Frame blank{CC::canvas_size().x, CC::canvas_size().y};
-    //CC::display(blank);
-
-    //std::cin.get();
+    // display image
+    CC::move_cursor_to(Coord{ 0, 0 });
+    Color prev_color{0,0,0};
+    std::string img_code = "";
+    for (short row = 0; row < image_height; ++row) {
+        for (short col = 0; col < image_width; ++col) {
+            //CC::set_fcolor(image[row][col]);
+            // block char: 219
+            Color current_color = image[row][col];
+            if (current_color != prev_color) {
+                img_code += to_ansi(current_color);
+            }
+            img_code += (char)219;
+        }
+    }
+    CC::write(img_code);
 }
 
 void print_screen_border() {

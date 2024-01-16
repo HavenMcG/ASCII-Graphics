@@ -15,24 +15,26 @@ struct Color {
 		b = bn;
 	}
 };
+bool operator==(const Color lhs, const Color rhs);
+bool operator!=(const Color lhs, const Color rhs);
 
 struct Pixel {
 	char character;
-	Color foreground;
-	Color background;
+	Color fcolor;
+	Color bcolor;
 	Pixel() {
 		character = ' ';
-		foreground = Color{ 255, 255, 255 };
-		background = Color{ 0, 0, 0 };
+		fcolor = Color{ 255, 255, 255 };
+		bcolor = Color{ 0, 0, 0 };
 	}
 	Pixel(char ch) {
 		character = ch;
-		foreground = Color{ 255, 255, 255 };
-		background = Color{ 0, 0, 0 };
+		fcolor = Color{ 255, 255, 255 };
+		bcolor = Color{ 0, 0, 0 };
 	}
 };
 
-typedef std::vector<std::vector<Pixel>> FrameData;
+using FrameData = std::vector<std::vector<Pixel>>;
 
 class Shape {
 public:
