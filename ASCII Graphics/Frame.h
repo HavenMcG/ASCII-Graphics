@@ -4,6 +4,16 @@
 
 struct Color {
 	int r, g, b;
+	Color() {
+		r = 0;
+		g = 0;
+		b = 0;
+	}
+	Color(int rn, int gn, int bn) {
+		r = rn;
+		g = gn;
+		b = bn;
+	}
 };
 
 struct Pixel {

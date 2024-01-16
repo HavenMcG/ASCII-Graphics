@@ -1,5 +1,7 @@
 #pragma once
 #include "Frame.h"
+#include <string>
+#include <sstream>
 
 struct Coord {
 	short x;
@@ -11,7 +13,11 @@ public:
 	static void display(Frame f) { instance().display_impl(f); }
 
 	static void set_fcolor(Color c) { set_fcolor_impl(c); }
+	static void set_fcolor(int r, int g, int b) { set_fcolor(Color{ r, g, b }); }
 	static void set_bcolor(Color c) { set_bcolor_impl(c); }
+	static void set_bcolor(int r, int g, int b) { set_bcolor(Color{ r, g, b }); }
+	static void reset_colors();
+
 	static void move_cursor_to(Coord c) { move_cursor_to_impl(c); }
 
 	static void maximize() { instance().maximize_impl(); }
@@ -26,9 +32,13 @@ public:
 	static Coord canvas_size() { return instance().canvas_size_impl(); }
 	//static int enable_virtual_terminal() { return instance().enable_virtual_terminal_impl(); }
 
+	static std::string log() { return instance().m_log.str(); }
+
 	ConhostController(const ConhostController&) = delete;
 
 private:
+	std::ostringstream m_log;
+
 	void display_impl(Frame);
 
 	static void set_fcolor_impl(Color c);
