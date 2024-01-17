@@ -8,8 +8,20 @@ static HANDLE s_hOut;
 static HANDLE s_hIn;
 static HWND s_consoleWin;
 
-std::string to_ansi(Color c) {
+std::string to_ansi_fcolor(Color c) {
     return "\033[38;2;" + std::to_string(c.r) + ";" + std::to_string(c.g) + ";" + std::to_string(c.b) + "m";
+}
+
+std::string to_ansi_fcolor(int r, int g, int b) {
+    return to_ansi_fcolor(Color{ r,g,b });
+}
+
+std::string to_ansi_bcolor(Color c) {
+    return "\033[48;2;" + std::to_string(c.r) + ";" + std::to_string(c.g) + ";" + std::to_string(c.b) + "m";
+}
+
+std::string to_ansi_bcolor(int r, int g, int b) {
+    return to_ansi_bcolor(Color{ r,g,b });
 }
 
 Coord to_coord(COORD c) {
@@ -227,7 +239,7 @@ int ConhostController::enable_virtual_terminal_impl() {
 
 void ConhostController::reset_colors()
 {
-    std::cout << "\033[0m";
+    write("\033[0m");
 }
 
 
@@ -250,10 +262,9 @@ void ConhostController::display_impl(Frame f) {
             //set_fcolor(px.foreground);
 
             // Print the character from the 's' string
-            std::cout << px.character;
+            write(px.character);
 
-            // Reset the colors
-            std::cout << "\033[0m";
+            reset_colors();
         }
     }
 }
@@ -271,12 +282,12 @@ void ConhostController::write_impl(char ch) {
 
 
 void ConhostController::set_fcolor_impl(Color c) {
-    std::cout << to_ansi(c);
+    write(to_ansi_fcolor(c));
 }
 
 
 void ConhostController::set_bcolor_impl(Color c) {
-    std::cout << "\033[48;2;" << c.r << ";" << c.g << ";" << c.b << "m";
+    write(to_ansi_bcolor(c));
 }
 
 

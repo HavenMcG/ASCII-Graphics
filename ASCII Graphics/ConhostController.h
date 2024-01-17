@@ -21,10 +21,12 @@ public:
 	static void reset_colors();
 
 	static void move_cursor_to(Coord c) { instance().move_cursor_to_impl(c); }
+	static void move_cursor_to(short x, short y) { instance().move_cursor_to_impl(Coord{x,y}); }
 
 	static void maximize() { instance().maximize_impl(); }
 	static short canvas_width() { return instance().canvas_width_impl(); }
 	static short canvas_height() { return instance().canvas_height_impl(); }
+	static void set_font_size(Coord new_size) { instance().set_font_size_impl(new_size.x, new_size.y); }
 	static void set_font_size(short width, short height) { instance().set_font_size_impl(width, height); }
 	static void set_resolution(short width, short height) { instance().set_resolution_impl(width, height); }
 	static void set_buffer_size(short width, short height) { instance().set_buffer_size_impl(width, height); } // should this be public?
@@ -70,4 +72,8 @@ private:
 	}
 };
 
-std::string to_ansi(Color c);
+std::string to_ansi_fcolor(Color c);
+std::string to_ansi_fcolor(int r, int g, int b);
+
+std::string to_ansi_bcolor(Color c);
+std::string to_ansi_bcolor(int r, int g, int b);

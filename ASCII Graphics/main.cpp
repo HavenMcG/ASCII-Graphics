@@ -5,24 +5,34 @@
 #include <fstream>
 #include <string>
 
+using ImageData = std::vector<std::vector<Color>>;
+
 void print_screen_border();
 void print_buffer_debug_grid();
 void color_test();
-void temp_display_image(std::string filepath);
+void play_intro();
+std::string create_img_code(ImageData frame);
+ImageData read_image_data(std::string filepath);
 
 int main() {
     using CC = ConhostController;
     CC::maximize();
-    //CC::set_resolution(284, 67);
-    //CC::set_resolution(800, 600);
-    /*CC::set_font_size(2, 2);
-    CC::set_buffer_size(800, 600);
-    CC::set_bufferwindow_size(799, 449);*/
-    CC::set_resolution(400, 300);
 
-    //print_screen_border();
-    temp_display_image("../seasidegarden.bmp");
-    //CC::write("Hello World!");
+    //std::cout << "Reading image file...\n";
+    ImageData img_dat = read_image_data("../seasidegarden.bmp");
+    //std::cout << "Done.\n\n";
+    //std::cin.get();
+
+    //std::cout << "Forming image string...\n";
+    std::string img_code = create_img_code(img_dat);
+    //std::cout << "Done.\n\n";
+    //std::cin.get();
+
+    //CC::write("Displaying image to screen...\n");
+    CC::set_resolution(400, 300);
+    CC::move_cursor_to(0, 0);
+
+    CC::write(img_code);
     
     // Pause
     std::cin.get();
@@ -33,8 +43,55 @@ int main() {
     //std::cin.get();
 }
 
-void temp_display_image(std::string filepath) {
+void play_intro() {
     using CC = ConhostController;
+    std::cout << "Hello, this is a console window!\n";
+    std::cin.get();
+
+    CC::set_fcolor(9, 179, 94);
+    std::cout << "The windows console now supports ";
+    CC::set_fcolor(250, 215, 40);
+    std::cout << "24 bit rgb color!\n";
+    std::cin.get();
+
+    CC::set_fcolor(196, 156, 10);
+    std::cout << "These are block characters:\n";
+    color_test();
+    std::cin.get();
+
+    CC::set_fcolor(196, 10, 112);
+    std::cout << "I wonder if we could use block characters to paint a picture...\n";
+    std::cin.get();
+
+    CC::set_fcolor(47, 97, 0);
+    std::cout << "It would be easier if we could make the font square, like pixels.\n";
+    std::cin.get();
+    CC::set_fcolor(130, 7, 224);
+    std::cout << "That was easy!\n";
+
+    Coord font_size = CC::font_size();
+    CC::set_font_size(font_size.y, font_size.y);
+    std::cin.get();
+
+    CC::set_fcolor(37, 101, 179);
+    std::cout << "Lets make it smaller too.\n";
+    std::cin.get();
+    CC::set_fcolor(255, 89, 225);
+    std::cout << "Wow, it's getting hard to read now...\n";
+
+    CC::set_font_size(font_size.y / 2, font_size.y / 2);
+    std::cin.get();
+
+    CC::set_fcolor(40, 181, 150);
+    std::cout << "Now we have the tools needed to render images in the console!\n";
+    std::cin.get();
+
+    CC::set_fcolor(189, 166, 36);
+    std::cout << "For example, here's some art I found online:\n";
+    std::cin.get();
+}
+
+ImageData read_image_data(std::string filepath) {
     std::ifstream ifs;
     ifs.open(filepath, std::ios::binary);
     if (!ifs) std::cout << "error\n";
@@ -42,26 +99,26 @@ void temp_display_image(std::string filepath) {
     ifs.seekg(2);
     int file_size;
     ifs.read((char*)&file_size, 4);
-    std::cout << file_size << std::endl;
+    //std::cout << file_size << std::endl;
 
     ifs.seekg(10);
     int pixels_beginning;
     ifs.read((char*)&pixels_beginning, 4);
-    std::cout << pixels_beginning << std::endl;
+    //std::cout << pixels_beginning << std::endl;
 
     short image_width;
     ifs.seekg(18);
     ifs.read((char*)&image_width, sizeof(short));
-    std::cout << image_width << std::endl;
+    //std::cout << image_width << std::endl;
 
     short image_height;
     ifs.seekg(22);
     ifs.read((char*)&image_height, sizeof(short));
-    std::cout << image_height << std::endl;
+    //std::cout << image_height << std::endl;
 
     ifs.seekg(pixels_beginning);
 
-    std::vector<std::vector<Color>> image;
+    ImageData image;
     std::vector<Color> v{ static_cast<uint64_t>(image_width) };
     for (short row = 0; row < image_height; ++row) image.push_back(v);
 
@@ -78,23 +135,25 @@ void temp_display_image(std::string filepath) {
         }
     }
     ifs.close();
+    return image;
+}
 
-    // display image
-    CC::move_cursor_to(Coord{ 0, 0 });
-    Color prev_color{0,0,0};
+std::string create_img_code(ImageData frame) {
+    int frame_height = frame.size();
+    int frame_width = frame[0].size();
+    Color prev_color{ 0,0,0 };
     std::string img_code = "";
-    for (short row = 0; row < image_height; ++row) {
-        for (short col = 0; col < image_width; ++col) {
-            //CC::set_fcolor(image[row][col]);
-            // block char: 219
-            Color current_color = image[row][col];
+    for (short row = 0; row < frame_height; ++row) {
+        for (short col = 0; col < frame_width; ++col) {
+            Color current_color = frame[row][col];
             if (current_color != prev_color) {
-                img_code += to_ansi(current_color);
+                img_code += to_ansi_fcolor(current_color);
             }
+            // block char: 219
             img_code += (char)219;
         }
     }
-    CC::write(img_code);
+    return img_code;
 }
 
 void print_screen_border() {
@@ -138,8 +197,6 @@ void print_buffer_debug_grid() {
 
 void color_test() {
     using CC = ConhostController;
-    std::string s = "\\/\\/\\/\\/\\/\\/\\/\\/";
-    s += s + s + s + s + s + s + s;
 
     for (int colnum = 0; colnum < 77; colnum++) {
         int r = 255 - (colnum * 255 / 76);
@@ -148,9 +205,9 @@ void color_test() {
 
         if (g > 255) g = 510 - g;
 
-        CC::set_bcolor(r, g, b);
-        CC::set_fcolor(255 - r, 255 - g, 255 - b);
-        std::cout << s[colnum];
+        CC::set_fcolor(r, g, b);
+        //CC::set_fcolor(255 - r, 255 - g, 255 - b);
+        std::cout << (char)219 << ' ';
         CC::reset_colors();
     }
     std::cout << "\n";
