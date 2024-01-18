@@ -5,43 +5,25 @@
 #include <fstream>
 #include <string>
 
-using ImageData = std::vector<std::vector<Color>>;
+//using FrameData = std::vector<std::vector<Color>>;
+using ImageCodeRows = std::vector<std::string>;
 
 void print_screen_border();
 void print_buffer_debug_grid();
 void color_test();
 void play_intro();
-std::string create_img_code(ImageData frame);
-ImageData read_image_data(std::string filepath);
+Frame read_image_data(std::string filepath);
 
 int main() {
     using CC = ConhostController;
     CC::maximize();
-
-    //std::cout << "Reading image file...\n";
-    ImageData img_dat = read_image_data("../test01.bmp");
-    //std::cout << "Done.\n\n";
-    //std::cin.get();
-
-    //std::cout << "Forming image string...\n";
-    std::string img_code = create_img_code(img_dat);
-    //std::cout << "Done.\n\n";
-    //std::cin.get();
-
-    std::cin.get();
-    //CC::write("Displaying image to screen...\n");
-    CC::set_resolution(600, 300);
-    CC::move_cursor_to(0, 0);
-
-    std::cout << img_code;
-    
-    // Pause
-    std::cin.get();
-
-    //Frame blank{CC::canvas_size().x, CC::canvas_size().y};
-    //CC::display(blank);
-
-    //std::cin.get();
+    CC::set_resolution(600, 400);
+    Frame base{600,300};
+    Frame img = read_image_data("../test01.bmp");
+    base.draw(img, Coord{ 300,150 });
+    base.draw(img, Coord{ 20,90 });
+    base.draw(img, Coord{ 180,10 });
+    CC::display(base);
 }
 
 void play_intro() {
@@ -92,7 +74,7 @@ void play_intro() {
     std::cin.get();
 }
 
-ImageData read_image_data(std::string filepath) {
+Frame read_image_data(std::string filepath) {
     std::ifstream ifs;
     ifs.open(filepath, std::ios::binary);
     if (!ifs) std::cout << "error\n";
@@ -119,9 +101,7 @@ ImageData read_image_data(std::string filepath) {
 
     ifs.seekg(pixels_beginning);
 
-    ImageData image;
-    std::vector<Color> v{ static_cast<uint64_t>(image_width) };
-    for (short row = 0; row < image_height; ++row) image.push_back(v);
+    Frame image{ image_width,image_height };
 
     unsigned char R, G, B;
 
@@ -132,30 +112,11 @@ ImageData read_image_data(std::string filepath) {
             ifs.read((char*)&G, sizeof(unsigned char));
             ifs.read((char*)&R, sizeof(unsigned char));
 
-            image[image_height - row - 1][col] = Color{ R,G,B };
+            image.frame_data[image_height - row - 1][col] = Color{ R,G,B };
         }
     }
     ifs.close();
     return image;
-}
-
-std::string create_img_code(ImageData frame) {
-    int frame_height = frame.size();
-    int frame_width = frame[0].size();
-    Color prev_color{ 0,0,0 };
-    std::string img_code = "";
-    for (short row = 0; row < frame_height; ++row) {
-        for (short col = 0; col < frame_width; ++col) {
-            Color current_color = frame[row][col];
-            if (current_color != prev_color) {
-                img_code += to_ansi_fcolor(current_color);
-            }
-            // block char: 219
-            img_code += (char)219;
-        }
-        img_code += '\n';
-    }
-    return img_code;
 }
 
 void print_screen_border() {

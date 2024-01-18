@@ -1,6 +1,10 @@
 #pragma once
-
 #include <vector>
+
+struct Coord {
+	short x;
+	short y;
+};
 
 struct Color {
 	int r, g, b;
@@ -36,6 +40,7 @@ bool operator!=(const Color lhs, const Color rhs);
 
 using FrameData = std::vector<std::vector<Color>>;
 
+
 class Shape {
 public:
 	virtual void draw(FrameData* frame_data);
@@ -48,17 +53,19 @@ public:
 	int width() { return m_width; }
 	int height() { return m_height; }
 	Frame(int w, int h);
+
+	void draw(Frame f, Coord start_point);
 	void draw(Shape s);
 	void clear();
 
-	FrameData frame_data() { return m_frame_data; }
+	//FrameData frame_data() { return m_frame_data; }
+	FrameData frame_data;
 
 private:
 	int m_width;
 	int m_height;
-	FrameData m_frame_data;
+	//FrameData m_frame_data;
 };
-
 
 
 

@@ -3,10 +3,6 @@
 #include <string>
 #include <sstream>
 
-struct Coord {
-	short x;
-	short y;
-};
 
 class ConhostController {
 public:
@@ -20,6 +16,7 @@ public:
 	static void set_bcolor(int r, int g, int b) { set_bcolor(Color{ r, g, b }); }
 	static void reset_colors();
 
+	static Coord cursor_position() { return instance().cursor_position_impl(); }
 	static void move_cursor_to(Coord c) { instance().move_cursor_to_impl(c); }
 	static void move_cursor_to(short x, short y) { instance().move_cursor_to_impl(Coord{x,y}); }
 
@@ -50,6 +47,8 @@ private:
 
 	void set_fcolor_impl(Color c);
 	void set_bcolor_impl(Color c);
+
+	Coord cursor_position_impl();
 	void move_cursor_to_impl(Coord new_pos);
 
 	void maximize_impl();
@@ -77,3 +76,5 @@ std::string to_ansi_fcolor(int r, int g, int b);
 
 std::string to_ansi_bcolor(Color c);
 std::string to_ansi_bcolor(int r, int g, int b);
+
+std::string create_frame_code(Frame frame);

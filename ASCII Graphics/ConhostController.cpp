@@ -245,28 +245,7 @@ void ConhostController::reset_colors()
 
 void ConhostController::display_impl(Frame f) {
     move_cursor_to({ 0,0 });
-    FrameData fd = f.frame_data();
-    for (int row = 0; row < f.width(); ++row) {
-        for (int col = 0; col < f.height(); ++col) {
-
-            // what we really need to do is check if frame is smaller than buffer and if so move the cursor appropriately
-            // 
-            // Also need to move cursor to start when we start
-
-            Color px = fd[col][row];
-
-            // Set background color
-            //set_bcolor(px.background);
-
-            // Set foreground color
-            //set_fcolor(px.foreground);
-
-            // Print the character from the 's' string
-            write((char)219);
-
-            reset_colors();
-        }
-    }
+    write(create_frame_code(f));
 }
 
 
@@ -291,7 +270,33 @@ void ConhostController::set_bcolor_impl(Color c) {
 }
 
 
+Coord ConhostController::cursor_position_impl() {
+    CONSOLE_SCREEN_BUFFER_INFO info;
+    GetConsoleScreenBufferInfo(s_hOut, &info);
+    return to_coord(info.dwCursorPosition);
+}
+
 void ConhostController::move_cursor_to_impl(Coord new_pos) {
     SetConsoleCursorPosition(s_hOut,to_wincoord(new_pos));
 }
 
+std::string create_frame_code(Frame frame) {
+    FrameData fd = frame.frame_data;
+    int frame_height = fd.size();
+    int frame_width = fd[0].size();
+    Color prev_color{ 0,0,0 };
+    std::string img_code = "";
+
+    for (short row = 0; row < frame_height; ++row) {
+        for (short col = 0; col < frame_width; ++col) {
+            Color current_color = fd[row][col];
+            if (current_color != prev_color || row == 0 && col == 0) {
+                img_code += to_ansi_fcolor(current_color);
+                prev_color = current_color;
+            }
+            // block char: 219
+            img_code += (char)219;
+        }
+    }
+    return img_code;
+}
