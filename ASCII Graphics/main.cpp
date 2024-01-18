@@ -19,7 +19,7 @@ int main() {
     CC::maximize();
 
     //std::cout << "Reading image file...\n";
-    ImageData img_dat = read_image_data("../seasidegarden.bmp");
+    ImageData img_dat = read_image_data("../test01.bmp");
     //std::cout << "Done.\n\n";
     //std::cin.get();
 
@@ -28,11 +28,12 @@ int main() {
     //std::cout << "Done.\n\n";
     //std::cin.get();
 
+    std::cin.get();
     //CC::write("Displaying image to screen...\n");
-    CC::set_resolution(400, 300);
+    CC::set_resolution(600, 300);
     CC::move_cursor_to(0, 0);
 
-    CC::write(img_code);
+    std::cout << img_code;
     
     // Pause
     std::cin.get();
@@ -99,22 +100,22 @@ ImageData read_image_data(std::string filepath) {
     ifs.seekg(2);
     int file_size;
     ifs.read((char*)&file_size, 4);
-    //std::cout << file_size << std::endl;
+    std::cout << file_size << std::endl;
 
     ifs.seekg(10);
     int pixels_beginning;
     ifs.read((char*)&pixels_beginning, 4);
-    //std::cout << pixels_beginning << std::endl;
+    std::cout << pixels_beginning << std::endl;
 
     short image_width;
     ifs.seekg(18);
     ifs.read((char*)&image_width, sizeof(short));
-    //std::cout << image_width << std::endl;
+    std::cout << image_width << std::endl;
 
     short image_height;
     ifs.seekg(22);
     ifs.read((char*)&image_height, sizeof(short));
-    //std::cout << image_height << std::endl;
+    std::cout << image_height << std::endl;
 
     ifs.seekg(pixels_beginning);
 
@@ -152,6 +153,7 @@ std::string create_img_code(ImageData frame) {
             // block char: 219
             img_code += (char)219;
         }
+        img_code += '\n';
     }
     return img_code;
 }

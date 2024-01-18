@@ -18,23 +18,23 @@ struct Color {
 bool operator==(const Color lhs, const Color rhs);
 bool operator!=(const Color lhs, const Color rhs);
 
-struct Pixel {
-	char character;
-	Color fcolor;
-	Color bcolor;
-	Pixel() {
-		character = ' ';
-		fcolor = Color{ 255, 255, 255 };
-		bcolor = Color{ 0, 0, 0 };
-	}
-	Pixel(char ch) {
-		character = ch;
-		fcolor = Color{ 255, 255, 255 };
-		bcolor = Color{ 0, 0, 0 };
-	}
-};
+//struct Pixel {
+//	char character;
+//	Color fcolor;
+//	Color bcolor;
+//	Pixel() {
+//		character = ' ';
+//		fcolor = Color{ 255, 255, 255 };
+//		bcolor = Color{ 0, 0, 0 };
+//	}
+//	Pixel(char ch) {
+//		character = ch;
+//		fcolor = Color{ 255, 255, 255 };
+//		bcolor = Color{ 0, 0, 0 };
+//	}
+//};
 
-using FrameData = std::vector<std::vector<Pixel>>;
+using FrameData = std::vector<std::vector<Color>>;
 
 class Shape {
 public:
@@ -51,8 +51,6 @@ public:
 	void draw(Shape s);
 	void clear();
 
-	// inefficient?
-	void draw(short x, short y, Pixel px);
 	FrameData frame_data() { return m_frame_data; }
 
 private:

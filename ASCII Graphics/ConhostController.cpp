@@ -253,7 +253,7 @@ void ConhostController::display_impl(Frame f) {
             // 
             // Also need to move cursor to start when we start
 
-            Pixel px = fd[col][row];
+            Color px = fd[col][row];
 
             // Set background color
             //set_bcolor(px.background);
@@ -262,7 +262,7 @@ void ConhostController::display_impl(Frame f) {
             //set_fcolor(px.foreground);
 
             // Print the character from the 's' string
-            write(px.character);
+            write((char)219);
 
             reset_colors();
         }
