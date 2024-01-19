@@ -248,6 +248,14 @@ void ConhostController::display_impl(Frame f) {
     write(create_frame_code(f));
 }
 
+void ConhostController::display_impl(Scene s) {
+    for (int i = 0; i < s.contents.size(); ++i) {
+        EntityPosition ep = s.contents[0];
+        move_cursor_to(ep.position);
+        write(create_frame_code(ep.entity));
+    }
+}
+
 
 void ConhostController::write_impl(std::string s) {
     DWORD charsWritten;

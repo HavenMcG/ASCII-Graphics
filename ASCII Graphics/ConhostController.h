@@ -7,6 +7,7 @@
 class ConhostController {
 public:
 	static void display(Frame f) { instance().display_impl(f); }
+	static void display(Scene s) { instance().display_impl(s); }
 	static void write(std::string s) { instance().write_impl(s); }
 	static void write(char ch) { instance().write_impl(ch); }
 
@@ -42,6 +43,7 @@ private:
 	std::ostringstream m_log;
 
 	void display_impl(Frame);
+	void display_impl(Scene);
 	void write_impl(std::string s);
 	void write_impl(char ch);
 

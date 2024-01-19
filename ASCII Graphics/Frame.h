@@ -55,20 +55,25 @@ public:
 	Frame(int w, int h);
 
 	void draw(Frame f, Coord start_point);
-	void draw(Shape s);
 	void clear();
 
 	//FrameData frame_data() { return m_frame_data; }
 	FrameData frame_data;
-
 private:
 	int m_width;
 	int m_height;
 	//FrameData m_frame_data;
 };
 
+struct EntityPosition {
+	Frame entity;
+	Coord position;
+};
 
-
+struct Scene {
+	std::vector<EntityPosition> contents;
+	void add(Frame entity, Coord position);
+};
 
 
 

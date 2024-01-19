@@ -33,17 +33,6 @@ void Frame::draw(Frame f, Coord start) {
 	}
 }
 
-void Frame::draw(Shape s) {
-	//for (int y = 0; y < m_height; ++y) {
-	//	for (int x = 0; x < m_width; ++x) {
-	//		//std::cout << "Checking point (" << x << "," << y << ")\n";
-	//		if (s.has_point(x, y)) m_frame_data[y][x] = (char)219;
-	//	}
-	//}
-	// 
-	//s.draw(&m_frame_data);
-}
-
 void Frame::clear() {
 	for (int y = 0; y < m_height; ++y) {
 		for (int x = 0; x < m_width; ++x) {
@@ -52,3 +41,9 @@ void Frame::clear() {
 	}
 }
 
+void Scene::add(Frame entity, Coord position) {
+	EntityPosition ep{entity,position};
+	/*ep.entity = &entity;
+	ep.position = position;*/
+	contents.push_back(ep);
+}

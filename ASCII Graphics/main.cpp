@@ -18,12 +18,20 @@ int main() {
     using CC = ConhostController;
     CC::maximize();
     CC::set_resolution(600, 400);
-    Frame base{600,300};
+
+    Frame background{600,300};
     Frame img = read_image_data("../test01.bmp");
-    base.draw(img, Coord{ 300,150 });
-    base.draw(img, Coord{ 20,90 });
-    base.draw(img, Coord{ 180,10 });
-    CC::display(base);
+    background.draw(img, Coord{ 300,150 });
+    background.draw(img, Coord{ 20,90 });
+    background.draw(img, Coord{ 180,10 });
+    //CC::display(background);
+
+    Scene my_scene{};
+    my_scene.add(background, Coord{0,0});
+    my_scene.add(img, Coord{ 300,150 });
+    my_scene.add(img, Coord{ 20,90 });
+    my_scene.add(img, Coord{ 180,10 });
+    CC::display(my_scene);
 }
 
 void play_intro() {
