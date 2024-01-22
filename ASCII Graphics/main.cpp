@@ -6,8 +6,11 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <chrono>
+#include <thread>
 
-//using FrameData = std::vector<std::vector<Color>>;
+using namespace std::this_thread;
+using namespace std::chrono_literals;
 using ImageCodeRows = std::vector<std::string>;
 
 void print_screen_border();
@@ -25,33 +28,131 @@ int main() {
     Frame background = read_image_data("../seasidegarden.bmp");
     Frame img = read_image_data("../test01.bmp");
 
+    short x_pos = 170;
+    short y_pos = 90;
+    std::chrono::milliseconds delay = 30ms;
+    short increment = 1;
+    short distance = 20;
+
     Scene my_scene{};
     my_scene.add(background, Coord{ 0,0 });
-    my_scene.add(img, Coord{ 300,150 });
-    my_scene.add(img, Coord{ 20,90 });
-    my_scene.add(img, Coord{ 180,10 });
+    my_scene.add(img, Coord{ x_pos, y_pos });
     my_scene.draw();
 
-    std::cin.get();
-    my_scene.move(2, Coord{ 30,100 });
-    std::cin.get();
-    my_scene.move(2, Coord{ 40,110 });
-    std::cin.get();
-    my_scene.move(2, Coord{ 50,120 });
-    std::cin.get();
-    my_scene.move(2, Coord{ 60,130 });
-    std::cin.get();
-    my_scene.move(2, Coord{ 70,140 });
-    std::cin.get();
-    my_scene.move(2, Coord{ 80,150 });
-    std::cin.get();
-    my_scene.move(2, Coord{ 90,160 });
-    std::cin.get();
-    my_scene.move(2, Coord{ 100,170 });
-    std::cin.get();
-    my_scene.move(2, Coord{ 110,180 });
-    std::cin.get();
-    my_scene.move(2, Coord{ 120,190 });
+
+    while (true) {
+        // South East
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            x_pos += increment;
+            y_pos += increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+        // Back to start
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            x_pos -= increment;
+            y_pos -= increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+
+        // East
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            x_pos += increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+        // Back to start
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            x_pos -= increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+
+        // North East
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            x_pos += increment;
+            y_pos -= increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+        // Back to start
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            x_pos -= increment;
+            y_pos += increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+
+        // North
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            y_pos -= increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+        // Back to start
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            y_pos += increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+
+        // North West
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            x_pos -= increment;
+            y_pos -= increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+        // Back to start
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            x_pos += increment;
+            y_pos += increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+
+        // West
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            x_pos -= increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+        // Back to start
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            x_pos += increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+
+        // South West
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            x_pos -= increment;
+            y_pos += increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+        // Back to start
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            x_pos += increment;
+            y_pos -= increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+
+        // South
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            y_pos += increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+        // Back to start
+        for (int i = 0; i < distance; ++i) {
+            sleep_for(delay);
+            y_pos -= increment;
+            my_scene.move(1, Coord{ x_pos,y_pos });
+        }
+    }
 
     CC::move_cursor_to(CC::canvas_width() - 1, CC::canvas_height() - 1);
 }

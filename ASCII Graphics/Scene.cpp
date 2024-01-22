@@ -74,23 +74,29 @@ void Scene::draw() {
 
 void Scene::move(int index, Coord new_pos) {
 	EntityPosition* ep = &contents[index];
+	short width = ep->entity.width();
+	short height = ep->entity.height();
+
+	CC::move_cursor_to(new_pos);
+	CC::write(create_frame_code(ep->entity));
+
 	Coord old_pos = ep->position;
 	Coord change = Coord{ static_cast<short>(new_pos.x - old_pos.x), static_cast<short>(new_pos.y - old_pos.y) };
-	if (change.x > 0) {
+
+	// DOWN
+	if (change.y > 0) {
+		// wide rect
 		for (int row = old_pos.y; row < new_pos.y; ++row) {
-			if (change.y > 0) {
-				for (int col = old_pos.x; col < old_pos.x + ep->entity.width(); ++col) {
-					CC::move_cursor_to(col, row);
-					if (index == 0) CC::set_fcolor(0, 0, 0); // default??
-					else CC::set_fcolor(contents[0].entity.frame_data[row][col]);
-					CC::write((char)219);
-				}
+			for (int col = old_pos.x; col < old_pos.x + width; ++col) {
+				CC::move_cursor_to(col, row);
+				if (index == 0) CC::set_fcolor(0, 0, 0); // default??
+				else CC::set_fcolor(contents[0].entity.frame_data[row][col]);
+				CC::write((char)219);
 			}
 		}
-	}
-	if (change.y > 0) {
-		for (int row = new_pos.y; row < old_pos.y + ep->entity.height(); ++row) {
-			if (change.y > 0) {
+		// tall rect
+		for (int row = new_pos.y; row < old_pos.y + height; ++row) {
+			if (change.x > 0) {
 				for (int col = old_pos.x; col < new_pos.x; ++col) {
 					CC::move_cursor_to(col, row);
 					if (index == 0) CC::set_fcolor(0, 0, 0); // default??
@@ -98,9 +104,71 @@ void Scene::move(int index, Coord new_pos) {
 					CC::write((char)219);
 				}
 			}
+			else if (change.x < 0) {
+				for (int col = new_pos.x + width; col < old_pos.x + width; ++col) {
+					CC::move_cursor_to(col, row);
+					if (index == 0) CC::set_fcolor(0, 0, 0); // default??
+					else CC::set_fcolor(contents[0].entity.frame_data[row][col]);
+					CC::write((char)219);
+				}
+			}
 		}
 	}
-	CC::move_cursor_to(new_pos);
-	CC::write(create_frame_code(ep->entity));
+
+	// UP
+	else if (change.y < 0) {
+		// wide rect
+		for (int row = new_pos.y + height; row < old_pos.y + height; ++row) {
+			for (int col = old_pos.x; col < old_pos.x + width; ++col) {
+				CC::move_cursor_to(col, row);
+				if (index == 0) CC::set_fcolor(0, 0, 0); // default??
+				else CC::set_fcolor(contents[0].entity.frame_data[row][col]);
+				CC::write((char)219);
+			}
+		}
+		// tall rect
+		for (int row = old_pos.y; row < old_pos.y + height; ++row) {
+			if (change.x > 0) {
+				for (int col = old_pos.x; col < new_pos.x; ++col) {
+					CC::move_cursor_to(col, row);
+					if (index == 0) CC::set_fcolor(0, 0, 0); // default??
+					else CC::set_fcolor(contents[0].entity.frame_data[row][col]);
+					CC::write((char)219);
+				}
+			}
+			else if (change.x < 0) {
+				for (int col = new_pos.x + width; col < old_pos.x + width; ++col) {
+					CC::move_cursor_to(col, row);
+					if (index == 0) CC::set_fcolor(0, 0, 0); // default??
+					else CC::set_fcolor(contents[0].entity.frame_data[row][col]);
+					CC::write((char)219);
+				}
+			}
+		}
+	}
+	
+	// NONE
+	else if (change.y == 0) {
+		// tall rect
+		for (int row = old_pos.y; row < old_pos.y + height; ++row) {
+			if (change.x > 0) {
+				for (int col = old_pos.x; col < new_pos.x; ++col) {
+					CC::move_cursor_to(col, row);
+					if (index == 0) CC::set_fcolor(0, 0, 0); // default??
+					else CC::set_fcolor(contents[0].entity.frame_data[row][col]);
+					CC::write((char)219);
+				}
+			}
+			else if (change.x < 0) {
+				for (int col = new_pos.x + width; col < old_pos.x + width; ++col) {
+					CC::move_cursor_to(col, row);
+					if (index == 0) CC::set_fcolor(0, 0, 0); // default??
+					else CC::set_fcolor(contents[0].entity.frame_data[row][col]);
+					CC::write((char)219);
+				}
+			}
+		}
+	}
+
 	ep->position = new_pos;
 }
