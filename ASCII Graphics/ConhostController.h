@@ -1,13 +1,17 @@
 #pragma once
-#include "Frame.h"
+#include "GBase.h"
 #include <string>
 #include <sstream>
+#include <vector>
 
+// temp?
+using FrameCode = std::vector<std::string>;
 
 class ConhostController {
 public:
-	static void display(Frame f) { instance().display_impl(f); }
-	static void display(Scene s) { instance().display_impl(s); }
+	//static void display(Frame f) { instance().display_impl(f); }
+	//static void display(Scene s) { instance().display_impl(s); }
+	static void write(FrameCode fcode) { instance().write_impl(fcode); }
 	static void write(std::string s) { instance().write_impl(s); }
 	static void write(char ch) { instance().write_impl(ch); }
 
@@ -42,8 +46,9 @@ public:
 private:
 	std::ostringstream m_log;
 
-	void display_impl(Frame);
-	void display_impl(Scene);
+	//void display_impl(Frame);
+	//void display_impl(Scene);
+	void write_impl(FrameCode fcode);
 	void write_impl(std::string s);
 	void write_impl(char ch);
 
@@ -78,5 +83,3 @@ std::string to_ansi_fcolor(int r, int g, int b);
 
 std::string to_ansi_bcolor(Color c);
 std::string to_ansi_bcolor(int r, int g, int b);
-
-std::string create_frame_code(Frame frame);

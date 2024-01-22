@@ -1,6 +1,8 @@
 
 #include "ConhostController.h"
-
+#include "GBase.h"
+#include "Scene.h"
+#include <vector>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -19,19 +21,39 @@ int main() {
     CC::maximize();
     CC::set_resolution(600, 400);
 
-    Frame background{600,300};
+    //Frame background{600,300};
+    Frame background = read_image_data("../seasidegarden.bmp");
     Frame img = read_image_data("../test01.bmp");
-    background.draw(img, Coord{ 300,150 });
-    background.draw(img, Coord{ 20,90 });
-    background.draw(img, Coord{ 180,10 });
-    //CC::display(background);
 
     Scene my_scene{};
-    my_scene.add(background, Coord{0,0});
+    my_scene.add(background, Coord{ 0,0 });
     my_scene.add(img, Coord{ 300,150 });
     my_scene.add(img, Coord{ 20,90 });
     my_scene.add(img, Coord{ 180,10 });
-    CC::display(my_scene);
+    my_scene.draw();
+
+    std::cin.get();
+    my_scene.move(2, Coord{ 30,100 });
+    std::cin.get();
+    my_scene.move(2, Coord{ 40,110 });
+    std::cin.get();
+    my_scene.move(2, Coord{ 50,120 });
+    std::cin.get();
+    my_scene.move(2, Coord{ 60,130 });
+    std::cin.get();
+    my_scene.move(2, Coord{ 70,140 });
+    std::cin.get();
+    my_scene.move(2, Coord{ 80,150 });
+    std::cin.get();
+    my_scene.move(2, Coord{ 90,160 });
+    std::cin.get();
+    my_scene.move(2, Coord{ 100,170 });
+    std::cin.get();
+    my_scene.move(2, Coord{ 110,180 });
+    std::cin.get();
+    my_scene.move(2, Coord{ 120,190 });
+
+    CC::move_cursor_to(CC::canvas_width() - 1, CC::canvas_height() - 1);
 }
 
 void play_intro() {

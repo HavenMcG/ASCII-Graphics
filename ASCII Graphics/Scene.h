@@ -1,26 +1,7 @@
 #pragma once
 #include <vector>
-
-struct Coord {
-	short x;
-	short y;
-};
-
-struct Color {
-	int r, g, b;
-	Color() {
-		r = 0;
-		g = 0;
-		b = 0;
-	}
-	Color(int rn, int gn, int bn) {
-		r = rn;
-		g = gn;
-		b = bn;
-	}
-};
-bool operator==(const Color lhs, const Color rhs);
-bool operator!=(const Color lhs, const Color rhs);
+#include "GBase.h"
+#include <string>
 
 //struct Pixel {
 //	char character;
@@ -39,14 +20,7 @@ bool operator!=(const Color lhs, const Color rhs);
 //};
 
 using FrameData = std::vector<std::vector<Color>>;
-
-
-class Shape {
-public:
-	virtual void draw(FrameData* frame_data);
-
-private:
-};
+using FrameCode = std::vector<std::string>;
 
 class Frame {
 public:
@@ -64,6 +38,7 @@ private:
 	int m_height;
 	//FrameData m_frame_data;
 };
+FrameCode create_frame_code(Frame frame);
 
 struct EntityPosition {
 	Frame entity;
@@ -73,6 +48,8 @@ struct EntityPosition {
 struct Scene {
 	std::vector<EntityPosition> contents;
 	void add(Frame entity, Coord position);
+	void draw();
+	void move(int i, Coord new_pos);
 };
 
 

@@ -243,19 +243,27 @@ void ConhostController::reset_colors()
 }
 
 
-void ConhostController::display_impl(Frame f) {
-    move_cursor_to({ 0,0 });
-    write(create_frame_code(f));
-}
+//void ConhostController::display_impl(Frame f) {
+//    move_cursor_to({ 0,0 });
+//    write(create_frame_code(f));
+//}
 
-void ConhostController::display_impl(Scene s) {
-    for (int i = 0; i < s.contents.size(); ++i) {
-        EntityPosition ep = s.contents[0];
-        move_cursor_to(ep.position);
-        write(create_frame_code(ep.entity));
+//void ConhostController::display_impl(Scene s) {
+//    for (int i = 0; i < s.contents.size(); ++i) {
+//        EntityPosition ep = s.contents[0];
+//        move_cursor_to(ep.position);
+//        write(create_frame_code(ep.entity));
+//    }
+//}
+
+
+void ConhostController::write_impl(FrameCode fcode) {
+    Coord start_pos = cursor_position();
+    for (int i = 0; i < fcode.size(); ++i) {
+        move_cursor_to(start_pos.x, start_pos.y + i);
+        write(fcode[i]);
     }
 }
-
 
 void ConhostController::write_impl(std::string s) {
     DWORD charsWritten;
@@ -288,23 +296,3 @@ void ConhostController::move_cursor_to_impl(Coord new_pos) {
     SetConsoleCursorPosition(s_hOut,to_wincoord(new_pos));
 }
 
-std::string create_frame_code(Frame frame) {
-    FrameData fd = frame.frame_data;
-    int frame_height = fd.size();
-    int frame_width = fd[0].size();
-    Color prev_color{ 0,0,0 };
-    std::string img_code = "";
-
-    for (short row = 0; row < frame_height; ++row) {
-        for (short col = 0; col < frame_width; ++col) {
-            Color current_color = fd[row][col];
-            if (current_color != prev_color || row == 0 && col == 0) {
-                img_code += to_ansi_fcolor(current_color);
-                prev_color = current_color;
-            }
-            // block char: 219
-            img_code += (char)219;
-        }
-    }
-    return img_code;
-}
