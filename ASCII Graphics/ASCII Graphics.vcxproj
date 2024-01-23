@@ -119,6 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,13 +129,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Frame.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="GBase.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="WinControl.cpp" />
+    <ClCompile Include="ConhostController.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Frame.h" />
-    <ClInclude Include="WinControl.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="ConhostController.h" />
+    <ClInclude Include="GBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
