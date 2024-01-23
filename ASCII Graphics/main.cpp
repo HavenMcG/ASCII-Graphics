@@ -39,7 +39,6 @@ int main() {
     my_scene.add(img, Coord{ x_pos, y_pos });
     my_scene.draw();
 
-
     while (true) {
         // South East
         for (int i = 0; i < distance; ++i) {

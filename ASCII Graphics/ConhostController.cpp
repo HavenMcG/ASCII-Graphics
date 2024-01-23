@@ -3,6 +3,10 @@
 #include <iostream>
 #include <windows.h>
 
+// temp
+#include <chrono>
+#include <thread>
+using namespace std::chrono_literals;
 
 static HANDLE s_hOut;
 static HANDLE s_hIn;
@@ -268,11 +272,13 @@ void ConhostController::write_impl(FrameCode fcode) {
 void ConhostController::write_impl(std::string s) {
     DWORD charsWritten;
     WriteConsoleA(s_hOut, s.c_str(), s.size(), &charsWritten, NULL);
+    //std::this_thread::sleep_for(2ms);
 }
 
 void ConhostController::write_impl(char ch) {
     DWORD charsWritten;
     WriteConsoleA(s_hOut, &ch, 1, &charsWritten, NULL);
+    //std::this_thread::sleep_for(2ms);
 }
 
 
