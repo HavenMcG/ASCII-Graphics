@@ -30,9 +30,9 @@ int main() {
 
     short x_pos = 170;
     short y_pos = 90;
-    std::chrono::milliseconds delay = 30ms;
-    short increment = 1;
-    short distance = 20;
+    std::chrono::milliseconds delay = 20ms;
+    short hop_distance = 1;
+    short hop_count = 20;
 
     Scene my_scene{};
     my_scene.add(background, Coord{ 0,0 });
@@ -41,114 +41,114 @@ int main() {
 
     while (true) {
         // South East
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            x_pos += increment;
-            y_pos += increment;
+            x_pos += hop_distance;
+            y_pos += hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
         // Back to start
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            x_pos -= increment;
-            y_pos -= increment;
+            x_pos -= hop_distance;
+            y_pos -= hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
 
         // East
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            x_pos += increment;
+            x_pos += hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
         // Back to start
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            x_pos -= increment;
+            x_pos -= hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
 
         // North East
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            x_pos += increment;
-            y_pos -= increment;
+            x_pos += hop_distance;
+            y_pos -= hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
         // Back to start
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            x_pos -= increment;
-            y_pos += increment;
+            x_pos -= hop_distance;
+            y_pos += hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
 
         // North
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            y_pos -= increment;
+            y_pos -= hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
         // Back to start
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            y_pos += increment;
+            y_pos += hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
 
         // North West
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            x_pos -= increment;
-            y_pos -= increment;
+            x_pos -= hop_distance;
+            y_pos -= hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
         // Back to start
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            x_pos += increment;
-            y_pos += increment;
+            x_pos += hop_distance;
+            y_pos += hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
 
         // West
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            x_pos -= increment;
+            x_pos -= hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
         // Back to start
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            x_pos += increment;
+            x_pos += hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
 
         // South West
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            x_pos -= increment;
-            y_pos += increment;
+            x_pos -= hop_distance;
+            y_pos += hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
         // Back to start
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            x_pos += increment;
-            y_pos -= increment;
+            x_pos += hop_distance;
+            y_pos -= hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
 
         // South
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            y_pos += increment;
+            y_pos += hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
         // Back to start
-        for (int i = 0; i < distance; ++i) {
+        for (int i = 0; i < hop_count; ++i) {
             sleep_for(delay);
-            y_pos -= increment;
+            y_pos -= hop_distance;
             my_scene.move(1, Coord{ x_pos,y_pos });
         }
     }

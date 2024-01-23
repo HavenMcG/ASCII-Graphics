@@ -272,13 +272,13 @@ void ConhostController::write_impl(FrameCode fcode) {
 void ConhostController::write_impl(std::string s) {
     DWORD charsWritten;
     WriteConsoleA(s_hOut, s.c_str(), s.size(), &charsWritten, NULL);
-    //std::this_thread::sleep_for(2ms);
+    //std::this_thread::sleep_for(10ms);
 }
 
 void ConhostController::write_impl(char ch) {
     DWORD charsWritten;
     WriteConsoleA(s_hOut, &ch, 1, &charsWritten, NULL);
-    //std::this_thread::sleep_for(2ms);
+    //std::this_thread::sleep_for(3ms);
 }
 
 

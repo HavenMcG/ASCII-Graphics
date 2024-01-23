@@ -77,45 +77,41 @@ void Scene::move(int index, Coord new_pos) {
 	short width = ep->entity.width();
 	short height = ep->entity.height();
 
+	// draw the entity in it's new position:
 	CC::move_cursor_to(new_pos);
 	CC::write(create_frame_code(ep->entity));
 
+	// figure out what we need to erase:
 	Coord old_pos = ep->position;
 	Coord change = Coord{ new_pos.x - old_pos.x, new_pos.y - old_pos.y };
 
-	Coord start_w;
-	Coord end_w;
-	Coord start_t;
-	Coord end_t;
+	Coord start_w{ 0,0 }; // wide rectangle
+	Coord end_w{ 0,0 };
+	Coord start_t{ 0,0 }; // tall rectangle (excluding shared portion)
+	Coord end_t{ 0,0 };
 
-	// DOWN
-	if (change.y > 0) {
-		// wide rect
-		start_w = Coord{ old_pos.x, old_pos.y };
-		end_w = Coord{ old_pos.x + width, new_pos.y };
-		
-		// tall rect
-		start_t.y = new_pos.y;
-		end_t.y = old_pos.y + height;
-		if (change.x > 0) {
-			start_t.x = old_pos.x;
-			end_t.x = new_pos.x;
-		}
-		else if (change.x < 0) {
-			start_t.x = new_pos.x + width;
-			end_t.x = old_pos.x + width;
-		}
-	}
-
-	// UP
-	else if (change.y < 0) {
-		// wide rect
-		start_w = Coord{ old_pos.x, new_pos.y + height };
+	if (change.x >= width || change.y >= height) { // no overlap between old and new positions.
+		start_w = old_pos;
 		end_w = Coord{ old_pos.x + width, old_pos.y + height };
-		
-		// tall rect
-		start_t.y = old_pos.y;
-		end_t.y = old_pos.y + height;
+	}
+	else { // there is overlap, we erase only what we didn't already overwrite.
+		if (change.y > 0) {
+			start_w = Coord{ old_pos.x, old_pos.y };
+			end_w = Coord{ old_pos.x + width, new_pos.y };
+			start_t.y = new_pos.y;
+			end_t.y = old_pos.y + height;
+		}
+		else if (change.y < 0) {
+			start_w = Coord{ old_pos.x, new_pos.y + height };
+			end_w = Coord{ old_pos.x + width, old_pos.y + height };
+			start_t.y = old_pos.y;
+			end_t.y = old_pos.y + height;
+		}
+		else if (change.y == 0) {
+			start_t.y = old_pos.y;
+			end_t.y = old_pos.y + height;
+		}
+
 		if (change.x > 0) {
 			start_t.x = old_pos.x;
 			end_t.x = new_pos.x;
@@ -125,58 +121,47 @@ void Scene::move(int index, Coord new_pos) {
 			end_t.x = old_pos.x + width;
 		}
 	}
-	
-	// NONE
-	//else if (change.y == 0) {
-	//	// tall rect
-	//	for (int row = old_pos.y; row < old_pos.y + height; ++row) {
-	//		if (change.x > 0) {
-	//			for (int col = old_pos.x; col < new_pos.x; ++col) {
-	//				CC::move_cursor_to(col, row);
-	//				if (index == 0) CC::set_fcolor(0, 0, 0); // default??
-	//				else CC::set_fcolor(contents[0].entity.frame_data[row][col]);
-	//				CC::write((char)219);
-	//			}
-	//		}
-	//		else if (change.x < 0) {
-	//			for (int col = new_pos.x + width; col < old_pos.x + width; ++col) {
-	//				CC::move_cursor_to(col, row);
-	//				if (index == 0) CC::set_fcolor(0, 0, 0); // default??
-	//				else CC::set_fcolor(contents[0].entity.frame_data[row][col]);
-	//				CC::write((char)219);
-	//			}
-	//		}
-	//	}
-	//}
-
-
 	// wide rect
-	FrameCode fcw;
-	for (int row = start_w.y; row < end_w.y; ++row) {
-		std::string line = "";
-		for (int col = start_w.x; col < end_w.x; ++col) {
-			if (index == 0) line += to_ansi_fcolor(0, 0, 0); // default??
-			else line += to_ansi_fcolor((contents[0].entity.frame_data[row][col]));
-			line += (char)219;
+	if (end_w.x - start_w.x > 0) {
+		FrameCode wide;
+		Color prev_color;
+		for (int row = start_w.y; row < end_w.y; ++row) {
+			std::string row_code = "";
+			for (int col = start_w.x; col < end_w.x; ++col) {
+				Color current_color{ 0,0,0 }; // default??
+				if (index != 0) current_color = (contents[0].entity.frame_data[row][col]);
+				if (current_color != prev_color || row == 0 && col == 0) {
+					row_code += to_ansi_fcolor(current_color);
+					prev_color = current_color;
+				}
+				row_code += (char)219;
+			}
+			wide.push_back(row_code);
 		}
-		fcw.push_back(line);
+		CC::move_cursor_to(start_w);
+		CC::write(wide);
 	}
-	CC::move_cursor_to(start_w);
-	CC::write(fcw);
 
 	// tall rect
-	FrameCode fct;
-	for (int row = start_t.y; row < end_t.y; ++row) {
-		std::string line = "";
-		for (int col = start_t.x; col < end_t.x; ++col) {
-			if (index == 0) line += to_ansi_fcolor(0, 0, 0); // default??
-			else line += to_ansi_fcolor((contents[0].entity.frame_data[row][col]));
-			line += (char)219;
+	if (end_t.x - start_t.x > 0) {
+		FrameCode tall;
+		Color prev_color;
+		for (int row = start_t.y; row < end_t.y; ++row) {
+			std::string row_code = "";
+			for (int col = start_t.x; col < end_t.x; ++col) {
+				Color current_color{ 0,0,0 }; // default??
+				if (index != 0) current_color = (contents[0].entity.frame_data[row][col]);
+				if (current_color != prev_color || row == 0 && col == 0) {
+					row_code += to_ansi_fcolor(current_color);
+					prev_color = current_color;
+				}
+				row_code += (char)219;
+			}
+			tall.push_back(row_code);
 		}
-		fct.push_back(line);
+		CC::move_cursor_to(start_t);
+		CC::write(tall);
 	}
-	CC::move_cursor_to(start_t);
-	CC::write(fct);
 
 	ep->position = new_pos;
 }

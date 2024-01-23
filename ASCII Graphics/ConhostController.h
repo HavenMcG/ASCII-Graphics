@@ -9,8 +9,6 @@ using FrameCode = std::vector<std::string>;
 
 class ConhostController {
 public:
-	//static void display(Frame f) { instance().display_impl(f); }
-	//static void display(Scene s) { instance().display_impl(s); }
 	static void write(FrameCode fcode) { instance().write_impl(fcode); }
 	static void write(std::string s) { instance().write_impl(s); }
 	static void write(char ch) { instance().write_impl(ch); }
