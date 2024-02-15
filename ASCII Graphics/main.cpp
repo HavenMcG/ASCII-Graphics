@@ -17,7 +17,7 @@ void print_screen_border();
 void print_buffer_debug_grid();
 void color_test();
 void play_intro();
-Frame read_image_data(std::string filepath);
+Sprite read_image_data(std::string filepath);
 
 int main() {
     using CC = ConhostController;
@@ -25,8 +25,8 @@ int main() {
     CC::set_resolution(600, 400);
 
     //Frame background{600,300};
-    Frame background = read_image_data("../seasidegarden.bmp");
-    Frame img = read_image_data("../test01.bmp");
+    Sprite background = read_image_data("../seasidegarden.bmp");
+    Sprite img = read_image_data("../test01.bmp");
 
     short x_pos = 170;
     short y_pos = 90;
@@ -204,7 +204,7 @@ void play_intro() {
     std::cin.get();
 }
 
-Frame read_image_data(std::string filepath) {
+Sprite read_image_data(std::string filepath) {
     std::ifstream ifs;
     ifs.open(filepath, std::ios::binary);
     if (!ifs) std::cout << "error\n";
@@ -231,7 +231,7 @@ Frame read_image_data(std::string filepath) {
 
     ifs.seekg(pixels_beginning);
 
-    Frame image{ image_width,image_height };
+    Sprite image{ image_width,image_height };
 
     unsigned char R, G, B;
 
@@ -242,7 +242,7 @@ Frame read_image_data(std::string filepath) {
             ifs.read((char*)&G, sizeof(unsigned char));
             ifs.read((char*)&R, sizeof(unsigned char));
 
-            image.frame_data[image_height - row - 1][col] = Color{ R,G,B };
+            image.pixel_data[image_height - row - 1][col] = Color{ R,G,B };
         }
     }
     ifs.close();

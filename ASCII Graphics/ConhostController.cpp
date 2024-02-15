@@ -12,22 +12,6 @@ static HANDLE s_hOut;
 static HANDLE s_hIn;
 static HWND s_consoleWin;
 
-std::string to_ansi_fcolor(Color c) {
-    return "\033[38;2;" + std::to_string(c.r) + ";" + std::to_string(c.g) + ";" + std::to_string(c.b) + "m";
-}
-
-std::string to_ansi_fcolor(int r, int g, int b) {
-    return to_ansi_fcolor(Color{ r,g,b });
-}
-
-std::string to_ansi_bcolor(Color c) {
-    return "\033[48;2;" + std::to_string(c.r) + ";" + std::to_string(c.g) + ";" + std::to_string(c.b) + "m";
-}
-
-std::string to_ansi_bcolor(int r, int g, int b) {
-    return to_ansi_bcolor(Color{ r,g,b });
-}
-
 Coord to_coord(COORD c) {
     return Coord{ c.X, c.Y };
 }
@@ -261,7 +245,7 @@ void ConhostController::reset_colors()
 //}
 
 
-void ConhostController::write_impl(FrameCode fcode) {
+void ConhostController::write_impl(RenderCode fcode) {
     Coord start_pos = cursor_position();
     for (int i = 0; i < fcode.size(); ++i) {
         move_cursor_to(start_pos.x, start_pos.y + i);
