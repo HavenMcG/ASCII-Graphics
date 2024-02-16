@@ -12,8 +12,6 @@ public:
 	int height() { return m_height; }
 	Sprite(int w, int h);
 
-	void draw(Sprite f, Coord start_point);
-
 	PixelData pixel_data;
 private:
 	int m_width;

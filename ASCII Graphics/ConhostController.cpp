@@ -31,27 +31,27 @@ ConhostController::ConhostController() {
         // TODO: throw suitable exception
     }
 
-    enable_virtual_terminal_impl(); // should this be here?
+    enable_virtual_terminal(); // should this be here?
 }
 
-void ConhostController::maximize_impl() {
+void ConhostController::maximize() {
     ShowWindow(s_consoleWin, SW_MAXIMIZE);
 }
 
-Coord ConhostController::canvas_size_impl() {
+Coord ConhostController::canvas_size() {
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
     GetConsoleScreenBufferInfo(s_hOut, &scrBufferInfo);
     return to_coord(scrBufferInfo.dwSize);
 }
 
-short ConhostController::canvas_width_impl()
+short ConhostController::canvas_width()
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(s_hOut, &info);
     return info.dwSize.X;
 }
 
-short ConhostController::canvas_height_impl()
+short ConhostController::canvas_height()
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(s_hOut, &info);
@@ -59,7 +59,7 @@ short ConhostController::canvas_height_impl()
 }
 
 
-void ConhostController::set_resolution_impl(short width, short height) {
+void ConhostController::set_resolution(short width, short height) {
 
     // get Win info
     RECT clientRect;
@@ -112,7 +112,7 @@ void ConhostController::set_resolution_impl(short width, short height) {
 }
 
 
-void ConhostController::set_buffer_size_impl(short width, short height) {
+void ConhostController::set_buffer_size(short width, short height) {
     COORD newBufferSize = { width, height };
     if (!SetConsoleScreenBufferSize(s_hOut, newBufferSize)) {
         m_log << "SetConsoleScreenBufferSize() failed: " << GetLastError() << std::endl;
@@ -127,7 +127,7 @@ void ConhostController::set_buffer_size_impl(short width, short height) {
 }
 
 
-void ConhostController::set_bufferwindow_size_impl(short width, short height) {
+void ConhostController::set_bufferwindow_size(short width, short height) {
     SMALL_RECT rect = { 0,0,width,height };
     if (!SetConsoleWindowInfo(s_hOut, TRUE, &rect)) {
         m_log << "SetConsoleWindowInfo() failed: " << GetLastError() << std::endl;
@@ -136,7 +136,7 @@ void ConhostController::set_bufferwindow_size_impl(short width, short height) {
 }
 
 
-void ConhostController::set_font_size_impl(short newWidth, short newHeight) {
+void ConhostController::set_font_size(short newWidth, short newHeight) {
     // ---------------------------
     CONSOLE_FONT_INFOEX cfi;
     cfi.cbSize = sizeof(cfi);
@@ -152,7 +152,7 @@ void ConhostController::set_font_size_impl(short newWidth, short newHeight) {
 }
 
 
-Coord ConhostController::font_size_impl() {
+Coord ConhostController::font_size() {
     CONSOLE_FONT_INFO currentFont;
     GetCurrentConsoleFont(s_hOut, FALSE, &currentFont);
     COORD currentFontSize = GetConsoleFontSize(s_hOut, currentFont.nFont);
@@ -160,7 +160,7 @@ Coord ConhostController::font_size_impl() {
 }
 
 
-void ConhostController::log_debug_info_impl() {
+void ConhostController::log_debug_info() {
     // retrieve buffer info
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
     GetConsoleScreenBufferInfo(s_hOut, &scrBufferInfo);
@@ -185,7 +185,7 @@ void ConhostController::log_debug_info_impl() {
 }
 
 
-int ConhostController::enable_virtual_terminal_impl() {
+int ConhostController::enable_virtual_terminal() {
     // Set output mode to handle virtual terminal sequences
     
 
@@ -245,44 +245,53 @@ void ConhostController::reset_colors()
 //}
 
 
-void ConhostController::write_impl(RenderCode fcode) {
-    Coord start_pos = cursor_position();
-    for (int i = 0; i < fcode.size(); ++i) {
-        move_cursor_to(start_pos.x, start_pos.y + i);
-        write(fcode[i]);
-    }
-}
 
-void ConhostController::write_impl(std::string s) {
+
+void ConhostController::write(std::string s) {
     DWORD charsWritten;
     WriteConsoleA(s_hOut, s.c_str(), s.size(), &charsWritten, NULL);
     //std::this_thread::sleep_for(10ms);
 }
 
-void ConhostController::write_impl(char ch) {
+void ConhostController::write(char ch) {
     DWORD charsWritten;
     WriteConsoleA(s_hOut, &ch, 1, &charsWritten, NULL);
     //std::this_thread::sleep_for(3ms);
 }
 
 
-void ConhostController::set_fcolor_impl(Color c) {
+void ConhostController::set_fcolor(Color c) {
     write(to_ansi_fcolor(c));
 }
 
 
-void ConhostController::set_bcolor_impl(Color c) {
+void ConhostController::set_bcolor(Color c) {
     write(to_ansi_bcolor(c));
 }
 
 
-Coord ConhostController::cursor_position_impl() {
+Coord ConhostController::cursor_position() {
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(s_hOut, &info);
     return to_coord(info.dwCursorPosition);
 }
 
-void ConhostController::move_cursor_to_impl(Coord new_pos) {
+void ConhostController::move_cursor_to(Coord new_pos) {
     SetConsoleCursorPosition(s_hOut,to_wincoord(new_pos));
 }
 
+std::string to_ansi_fcolor(Color c) {
+    return "\033[38;2;" + std::to_string(c.r) + ";" + std::to_string(c.g) + ";" + std::to_string(c.b) + "m";
+}
+
+std::string to_ansi_fcolor(int r, int g, int b) {
+    return to_ansi_fcolor(Color{ r,g,b });
+}
+
+std::string to_ansi_bcolor(Color c) {
+    return "\033[48;2;" + std::to_string(c.r) + ";" + std::to_string(c.g) + ";" + std::to_string(c.b) + "m";
+}
+
+std::string to_ansi_bcolor(int r, int g, int b) {
+    return to_ansi_bcolor(Color{ r,g,b });
+}
