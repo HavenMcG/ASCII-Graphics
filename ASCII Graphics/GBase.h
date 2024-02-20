@@ -1,4 +1,7 @@
 #pragma once
+#include <vector>
+#include <string>
+#include <map>
 
 struct Coord {
 	short x;
@@ -20,3 +23,5 @@ struct Color {
 };
 bool operator==(const Color lhs, const Color rhs);
 bool operator!=(const Color lhs, const Color rhs);
+
+using PixelData = std::vector<std::vector<Color>>;

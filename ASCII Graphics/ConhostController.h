@@ -1,8 +1,6 @@
 #pragma once
 #include "GBase.h"
-#include <string>
-#include <sstream>
-#include <vector>
+//#include <sstream>
 
 // temp?
 using RenderCode = std::vector<std::string>;
@@ -10,7 +8,7 @@ using RenderCode = std::vector<std::string>;
 class ConhostController {
 
 public:
-	std::ostringstream m_log;
+	//std::ostringstream m_log;
 
 	ConhostController();
 

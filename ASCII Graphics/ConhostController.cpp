@@ -1,12 +1,6 @@
 
 #include "ConhostController.h"
-#include <iostream>
 #include <windows.h>
-
-// temp
-#include <chrono>
-#include <thread>
-using namespace std::chrono_literals;
 
 static HANDLE s_hOut;
 static HANDLE s_hIn;
@@ -74,19 +68,17 @@ void ConhostController::set_resolution(short width, short height) {
     if (charHeight < 2) charHeight = 2;
     if (charHeight > charWidth) charWidth = charHeight;
     else if (charWidth > charHeight) charHeight = charWidth;
-    m_log << "Desired char size: " << charWidth << " x " << charHeight << std::endl;
+    //m_log << "Desired char size: " << charWidth << " x " << charHeight << '\n';
     set_font_size(charWidth, charHeight);
 
     // verify that it worked
-    m_log << "Actual font size: " << font_size().x << " x " << font_size().y << std::endl;
+    //m_log << "Actual font size: " << font_size().x << " x " << font_size().y << '\n';
 
     // shrink the window to prevent error
     SMALL_RECT rect = { 0,0,0,0 };
 
     if (!SetConsoleWindowInfo(s_hOut, TRUE, &rect)) {
-        m_log << "shrinking window size failed: " << GetLastError() << std::endl;
-        std::cin.get(); // pause
-        exit(0);
+        //m_log << "shrinking window size failed: " << GetLastError() << '\n';
     }
 
     // set new buffer size
@@ -99,13 +91,13 @@ void ConhostController::set_resolution(short width, short height) {
     // now restore the window again
     SHORT maxWindowX = scrBufferInfo.dwMaximumWindowSize.X - 1;
     SHORT maxWindowY = scrBufferInfo.dwMaximumWindowSize.Y - 1;
-     //m_log << "Restore dimensions: " << maxWindowX << " x " << maxWindowY << std::endl; // why 67??
+     //m_log << "Restore dimensions: " << maxWindowX << " x " << maxWindowY << '\n'; // why 67??
     set_bufferwindow_size(maxWindowX, maxWindowY);
 
     // print extra debug info
 
-    m_log << "Window: " << clientWidth << " x " << clientHeight << std::endl;
-    m_log << "Char size * buffer size: " << charWidth * scrBufferInfo.dwSize.X << " x " << charHeight * scrBufferInfo.dwSize.Y << std::endl;
+    //m_log << "Window: " << clientWidth << " x " << clientHeight << '\n';
+    //m_log << "Char size * buffer size: " << charWidth * scrBufferInfo.dwSize.X << " x " << charHeight * scrBufferInfo.dwSize.Y << '\n';
 
     // hide scroll bars
     ShowScrollBar(s_consoleWin, SB_BOTH, FALSE);
@@ -115,22 +107,22 @@ void ConhostController::set_resolution(short width, short height) {
 void ConhostController::set_buffer_size(short width, short height) {
     COORD newBufferSize = { width, height };
     if (!SetConsoleScreenBufferSize(s_hOut, newBufferSize)) {
-        m_log << "SetConsoleScreenBufferSize() failed: " << GetLastError() << std::endl;
+        //m_log << "SetConsoleScreenBufferSize() failed: " << GetLastError() << '\n';
         exit(0);
     }
 
     // retrieve buffer info
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
     GetConsoleScreenBufferInfo(s_hOut, &scrBufferInfo);
-    m_log << "Desired buffer size: " << width << " x " << height << std::endl;
-    m_log << "Actual buffer size: " << scrBufferInfo.dwSize.X << " x " << scrBufferInfo.dwSize.Y << std::endl;
+    //m_log << "Desired buffer size: " << width << " x " << height << '\n';
+    //m_log << "Actual buffer size: " << scrBufferInfo.dwSize.X << " x " << scrBufferInfo.dwSize.Y << '\n';
 }
 
 
 void ConhostController::set_bufferwindow_size(short width, short height) {
     SMALL_RECT rect = { 0,0,width,height };
     if (!SetConsoleWindowInfo(s_hOut, TRUE, &rect)) {
-        m_log << "SetConsoleWindowInfo() failed: " << GetLastError() << std::endl;
+        //m_log << "SetConsoleWindowInfo() failed: " << GetLastError() << '\n';
         exit(0);
     }
 }
@@ -178,10 +170,10 @@ void ConhostController::log_debug_info() {
     int currentFontWidth = currentFontSize.X;
     int currentFontHeight = currentFontSize.Y;
 
-    m_log << "Window: " << winWidth << " x " << winHeight << std::endl;
-    m_log << "Font: " << currentFontWidth << " x " << currentFontHeight << std::endl;
-    m_log << "Current buffer size: " << scrBufferInfo.dwSize.X << " x " << scrBufferInfo.dwSize.Y << std::endl;
-    m_log << "Largest buffer size: " << scrBufferInfo.dwMaximumWindowSize.X << " x " << scrBufferInfo.dwMaximumWindowSize.Y << std::endl;
+    /*m_log << "Window: " << winWidth << " x " << winHeight << '\n';
+    m_log << "Font: " << currentFontWidth << " x " << currentFontHeight << '\n';
+    m_log << "Current buffer size: " << scrBufferInfo.dwSize.X << " x " << scrBufferInfo.dwSize.Y << '\n';
+    m_log << "Largest buffer size: " << scrBufferInfo.dwMaximumWindowSize.X << " x " << scrBufferInfo.dwMaximumWindowSize.Y << '\n';*/
 }
 
 

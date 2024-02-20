@@ -1,10 +1,5 @@
 #pragma once
-#include <vector>
 #include "GBase.h"
-#include <string>
-
-using PixelData = std::vector<std::vector<Color>>;
-
 
 class Sprite {
 public:

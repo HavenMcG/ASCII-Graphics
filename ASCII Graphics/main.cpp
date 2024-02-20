@@ -6,17 +6,15 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <chrono>
 #include <thread>
+#include <string>
 
 using ConArt::ConsoleRenderer;
 using namespace std::this_thread;
 using namespace std::chrono_literals;
-using ImageCodeRows = std::vector<std::string>;
 
 Sprite read_image_data(std::string filepath);
-
 
 int main() {
     ConhostController cc;
