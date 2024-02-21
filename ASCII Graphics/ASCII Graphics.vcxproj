@@ -133,20 +133,27 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EntityManager.cpp" />
+    <ClCompile Include="NameComponent.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="GBase.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ConhostController.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="SpriteComponent.cpp" />
+    <ClCompile Include="Transform2dComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="HECS.h" />
+    <ClInclude Include="NameComponent.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ConhostController.h" />
     <ClInclude Include="GBase.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SpriteComponent.h" />
+    <ClInclude Include="Transform2dComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

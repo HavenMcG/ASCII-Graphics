@@ -16,11 +16,8 @@
     <Filter Include="HECS">
       <UniqueIdentifier>{366ef83b-09d9-44ee-8135-72c1c5d96d58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="HECS\Header Files">
-      <UniqueIdentifier>{4e7cf9ea-d020-4ebd-9483-702364d07659}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="HECS\Source Files">
-      <UniqueIdentifier>{3bc0adf8-e8c6-4f3c-aac4-ea82f251d57d}</UniqueIdentifier>
+    <Filter Include="HECS\Components">
+      <UniqueIdentifier>{4aa92485-f93a-4b2c-9645-2ebcff5e4495}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -43,7 +40,16 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EntityManager.cpp">
-      <Filter>HECS\Source Files</Filter>
+      <Filter>HECS</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteComponent.cpp">
+      <Filter>HECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="NameComponent.cpp">
+      <Filter>HECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform2dComponent.cpp">
+      <Filter>HECS\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,8 +68,20 @@
     <ClInclude Include="Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteComponent.h">
+      <Filter>HECS\Components</Filter>
+    </ClInclude>
     <ClInclude Include="EntityManager.h">
-      <Filter>HECS\Header Files</Filter>
+      <Filter>HECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform2dComponent.h">
+      <Filter>HECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="HECS.h">
+      <Filter>HECS</Filter>
+    </ClInclude>
+    <ClInclude Include="NameComponent.h">
+      <Filter>HECS\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
