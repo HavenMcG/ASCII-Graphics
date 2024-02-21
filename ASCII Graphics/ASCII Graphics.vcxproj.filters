@@ -19,6 +19,9 @@
     <Filter Include="HECS\Components">
       <UniqueIdentifier>{4aa92485-f93a-4b2c-9645-2ebcff5e4495}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HECS\Systems">
+      <UniqueIdentifier>{8a022766-12cc-4d10-b28e-2593d6998ec0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -51,6 +54,9 @@
     <ClCompile Include="Transform2dComponent.cpp">
       <Filter>HECS\Components</Filter>
     </ClCompile>
+    <ClCompile Include="RenderSystem.cpp">
+      <Filter>HECS\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConhostController.h">
@@ -82,6 +88,9 @@
     </ClInclude>
     <ClInclude Include="NameComponent.h">
       <Filter>HECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderSystem.h">
+      <Filter>HECS\Systems</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

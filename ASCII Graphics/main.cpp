@@ -9,10 +9,12 @@
 #include <chrono>
 #include <thread>
 #include <string>
+#include "RenderSystem.h"
 
 using ConArt::ConsoleRenderer;
 using namespace std::this_thread;
 using namespace std::chrono_literals;
+using hecs::Entity;
 
 Sprite read_image_data(std::string filepath);
 
@@ -22,135 +24,44 @@ int main() {
     cc.maximize();
     cc.set_resolution(600, 400);
 
-
     Sprite background = read_image_data("../seasidegarden.bmp");
+    //cc.set_resolution(background.width(), background.height());
     Sprite img = read_image_data("../test01.bmp");
 
-    short x_pos = 170;
-    short y_pos = 90;
-    std::chrono::milliseconds delay = 20ms;
-    short hop_distance = 1;
-    short hop_count = 20;
+    hecs::RenderSystem rsys;
+    hecs::SpriteComponentManager spcm;
+    hecs::Transform2dComponentManager tfcm;
 
-    Scene my_scene{};
-    my_scene.add(background, Coord{ 0,0 });
-    my_scene.add(img, Coord{ x_pos, y_pos });
-    rr.draw(&my_scene);
+    std::vector<Entity> Entities;
 
-    while (true) {
-        // South East
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            x_pos += hop_distance;
-            y_pos += hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
-        // Back to start
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            x_pos -= hop_distance;
-            y_pos -= hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
+    Entity e_background = 0;
+    spcm.add_component(e_background);
+    hecs::SpriteComponent* spcomp = spcm.get_component(e_background);
+    spcomp->pixel_data = background.pixel_data;
+    tfcm.add_component(e_background);
+    hecs::Transform2dComponent* tfcomp = tfcm.get_component(e_background);
+    tfcomp->x = 0;
+    tfcomp->y = 0;
 
-        // East
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            x_pos += hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
-        // Back to start
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            x_pos -= hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
+    Entity e_1 = 1;
+    spcm.add_component(e_1);
+    spcomp = spcm.get_component(e_1);
+    spcomp->pixel_data = img.pixel_data;
+    tfcm.add_component(e_1);
+    tfcomp = tfcm.get_component(e_1);
+    tfcomp->x = 200;
+    tfcomp->y = 50;
 
-        // North East
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            x_pos += hop_distance;
-            y_pos -= hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
-        // Back to start
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            x_pos -= hop_distance;
-            y_pos += hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
+    Entity e_2 = 2;
+    spcm.add_component(e_2);
+    spcomp = spcm.get_component(e_2);
+    spcomp->pixel_data = img.pixel_data;
+    tfcm.add_component(e_2);
+    tfcomp = tfcm.get_component(e_2);
+    tfcomp->x = 300;
+    tfcomp->y = 100;
 
-        // North
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            y_pos -= hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
-        // Back to start
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            y_pos += hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
-
-        // North West
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            x_pos -= hop_distance;
-            y_pos -= hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
-        // Back to start
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            x_pos += hop_distance;
-            y_pos += hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
-
-        // West
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            x_pos -= hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
-        // Back to start
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            x_pos += hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
-
-        // South West
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            x_pos -= hop_distance;
-            y_pos += hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
-        // Back to start
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            x_pos += hop_distance;
-            y_pos -= hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
-
-        // South
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            y_pos += hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
-        // Back to start
-        for (int i = 0; i < hop_count; ++i) {
-            sleep_for(delay);
-            y_pos -= hop_distance;
-            rr.move(&my_scene, 1, Coord{ x_pos,y_pos });
-        }
-    }
-
+    rsys.render(rr, spcm, tfcm);
 
     cc.move_cursor_to(cc.canvas_width() - 1, cc.canvas_height() - 1);
 }

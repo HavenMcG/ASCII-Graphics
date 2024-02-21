@@ -15,12 +15,14 @@ namespace ConArt {
 	public:
 		ConsoleRenderer(ConhostController* cccc) : cc{ cccc } {}
 		void draw(Sprite* sp);
+		void draw(PixelData sp, Coord position);
 		void draw(Scene* sc);
 		void move(Scene* sc, int index, Coord new_pos);
 	private:
 		ConhostController* cc;
 		using RenderCode = std::vector<std::string>;
 		RenderCode create_render_code(Sprite sprite);
+		RenderCode create_render_code(PixelData pd);
 		void write(RenderCode rc);
 	};
 }

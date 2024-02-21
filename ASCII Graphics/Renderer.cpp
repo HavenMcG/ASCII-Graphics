@@ -4,6 +4,10 @@ using namespace ConArt;
 
 ConsoleRenderer::RenderCode ConsoleRenderer::create_render_code(Sprite sprite) {
 	PixelData pd = sprite.pixel_data;
+	return create_render_code(pd);
+}
+
+RenderCode ConArt::ConsoleRenderer::create_render_code(PixelData pd) {
 	int frame_height = pd.size();
 	int frame_width = pd[0].size();
 	Color prev_color{ 0,0,0 };
@@ -35,6 +39,11 @@ void ConsoleRenderer::write(RenderCode rc) {
 
 void ConArt::ConsoleRenderer::draw(Sprite* sp) {
 	write(create_render_code(*sp));
+}
+
+void ConArt::ConsoleRenderer::draw(PixelData sp, Coord position) {
+	cc->move_cursor_to(position);
+	write(create_render_code(sp));
 }
 
 void ConsoleRenderer::draw(Scene* sc) {

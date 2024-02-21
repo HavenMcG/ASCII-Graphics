@@ -6,13 +6,19 @@ namespace hecs {
         return &m_components[m_map[e]];
     }
 
+    const Vector<Transform2dComponent>& Transform2dComponentManager::components() {
+        return m_components;
+    }
+
     bool Transform2dComponentManager::has_component(Entity e) {
         return (m_map.find(e) != m_map.end());
     }
 
     void Transform2dComponentManager::add_component(Entity e) {
         int index = m_components.size();
-        m_components.push_back(Transform2dComponent{});
+        Transform2dComponent comp{};
+        comp.owner = e;
+        m_components.push_back(comp);
         m_map.insert({ e, index });
     }
 
