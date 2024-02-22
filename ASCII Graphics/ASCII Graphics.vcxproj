@@ -136,11 +136,9 @@
     <ClCompile Include="NameComponent.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
-    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="GBase.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ConhostController.cpp" />
-    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="Transform2dComponent.cpp" />
   </ItemGroup>
@@ -150,10 +148,8 @@
     <ClInclude Include="NameComponent.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderSystem.h" />
-    <ClInclude Include="Scene.h" />
     <ClInclude Include="ConhostController.h" />
     <ClInclude Include="GBase.h" />
-    <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="Transform2dComponent.h" />
   </ItemGroup>

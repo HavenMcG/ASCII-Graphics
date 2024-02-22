@@ -14,12 +14,21 @@ namespace hecs {
         return (m_map.find(e) != m_map.end());
     }
 
-    void Transform2dComponentManager::add_component(Entity e) {
+    Transform2dComponent* Transform2dComponentManager::add_component(Entity e) {
         int index = m_components.size();
         Transform2dComponent comp{};
         comp.owner = e;
         m_components.push_back(comp);
         m_map.insert({ e, index });
+        return &m_components[index];
+    }
+
+    Transform2dComponent* Transform2dComponentManager::add_component(Entity e, short x, short y) {
+        int index = m_components.size();
+        Transform2dComponent comp{ e,x,y };
+        m_components.push_back(comp);
+        m_map.insert({ e, index });
+        return &m_components[index];
     }
 
     void Transform2dComponentManager::remove_component(Entity e) {

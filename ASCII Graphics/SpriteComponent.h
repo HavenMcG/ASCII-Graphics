@@ -9,12 +9,13 @@ namespace hecs {
 		PixelData pixel_data;
 	};
 
-	struct SpriteComponentManager {
+	class SpriteComponentManager {
 	public:
 		SpriteComponent* get_component(Entity e);
 		const Vector<SpriteComponent>& components();
 		bool has_component(Entity e);
-		void add_component(Entity e);
+		SpriteComponent* add_component(Entity e);
+		SpriteComponent* add_component(Entity e, const PixelData& pd);
 		void remove_component(Entity e);
 	private:
 		Vector<SpriteComponent> m_components;

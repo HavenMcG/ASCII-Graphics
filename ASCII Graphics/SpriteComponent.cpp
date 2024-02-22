@@ -14,12 +14,21 @@ namespace hecs {
         return (m_map.find(e) != m_map.end());
     }
 
-    void SpriteComponentManager::add_component(Entity e) {
+    SpriteComponent* SpriteComponentManager::add_component(Entity e) {
         int index = m_components.size();
         SpriteComponent comp{};
         comp.owner = e;
         m_components.push_back(comp);
         m_map.insert({ e, index });
+        return &m_components[index];
+    }
+
+    SpriteComponent* SpriteComponentManager::add_component(Entity e, const PixelData& pd) {
+        int index = m_components.size();
+        SpriteComponent comp{ e,pd };
+        m_components.push_back(comp);
+        m_map.insert({ e, index });
+        return &m_components[index];
     }
 
     void SpriteComponentManager::remove_component(Entity e) {
