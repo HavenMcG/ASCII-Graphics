@@ -21,7 +21,7 @@ int main() {
     ConhostController cc;
     ConsoleRenderer rr{ &cc };
     cc.maximize();
-    cc.set_resolution(600, 400);
+    cc.set_resolution(600, 300+8);
 
     PixelData background = read_image_data("../seasidegarden.bmp");
     PixelData img = read_image_data("../test01.bmp");
@@ -41,7 +41,7 @@ int main() {
 
     Entity e_1 = 1;
     spcomp = spcm.add_component(e_1,img);
-    tfcomp = tfcm.add_component(e_1,200,50);
+    tfcomp = tfcm.add_component(e_1,50,150);
 
     Entity e_2 = 2;
     spcomp = spcm.add_component(e_2,img);
@@ -49,7 +49,7 @@ int main() {
 
     rsys.render(rr, spcm, tfcm);
 
-    cc.move_cursor_to(cc.canvas_width() - 1, cc.canvas_height() - 1);
+    cc.move_cursor_to(cc.canvas_width() - 1, cc.canvas_height() - 1 - 8);
 }
 
 
@@ -76,19 +76,15 @@ PixelData read_image_data(std::string filepath) {
 
     ifs.seekg(pixels_beginning);
 
-    PixelData image{ static_cast<unsigned>(image_height),std::vector<Color>{ static_cast<unsigned>(image_width) } };
-
+    PixelData image{ image_width,image_height };
     unsigned char R, G, B;
 
     // read pixel data
-    for (short row = 0; row < image_height; ++row) {
-        for (short col = 0; col < image_width; ++col) {
-            ifs.read((char*)&B, sizeof(unsigned char));
-            ifs.read((char*)&G, sizeof(unsigned char));
-            ifs.read((char*)&R, sizeof(unsigned char));
-
-            image[image_height - row - 1][col] = Color{ R,G,B };
-        }
+    for (int i = image.data.size()-1; i >= 0; --i) {
+        ifs.read((char*)&B, sizeof(unsigned char));
+        ifs.read((char*)&G, sizeof(unsigned char));
+        ifs.read((char*)&R, sizeof(unsigned char));
+        image.data[i] = Color{ R,G,B };
     }
     ifs.close();
     return image;

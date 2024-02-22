@@ -3,23 +3,20 @@
 using namespace ConArt;
 
 RenderCode ConArt::ConsoleRenderer::create_render_code(PixelData pd) {
-	int frame_height = pd.size();
-	int frame_width = pd[0].size();
 	Color prev_color{ 0,0,0 };
 	std::string row_code = "";
 	RenderCode frame_code{};
-	for (short row = 0; row < frame_height; ++row) {
-		row_code = "";
-		for (short col = 0; col < frame_width; ++col) {
-			Color current_color = pd[row][col];
-			if (current_color != prev_color || row == 0 && col == 0) {
-				row_code += to_ansi_bcolor(current_color);
-				prev_color = current_color;
-			}
-			// block char: 219
-			row_code += ' ';
+	for (int i = 0; i < pd.data.size(); ++i) {
+		Color current_color = pd.data[i];
+		if (current_color != prev_color || i == 0) {
+			row_code += to_ansi_bcolor(current_color);
+			prev_color = current_color;
 		}
-		frame_code.push_back(row_code);
+		row_code += ' ';
+		if ((i+1) % pd.width == 0) {
+			frame_code.push_back(row_code);
+			row_code = "";
+		}
 	}
 	return frame_code;
 }

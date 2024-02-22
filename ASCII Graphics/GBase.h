@@ -24,12 +24,13 @@ struct Color {
 bool operator==(const Color lhs, const Color rhs);
 bool operator!=(const Color lhs, const Color rhs);
 
-using PixelData = std::vector<std::vector<Color>>;
-//struct PixelData {
-//	short width;
-//	short height;
-//	std::vector<Color> data;
-//	PixelData(short ww, short hh) : width{ ww }, height{ hh } {
-//		data = std::vector<Color>(ww * hh);
-//	}
-//};
+//using PixelData = std::vector<std::vector<Color>>;
+struct PixelData {
+	short width;
+	short height;
+	std::vector<Color> data;
+	PixelData() : width{ 0 }, height{ 0 }, data{ std::vector<Color>{} } {}
+	PixelData(short ww, short hh) : width{ ww }, height{ hh } {
+		data = std::vector<Color>(ww * hh);
+	}
+};
