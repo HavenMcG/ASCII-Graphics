@@ -15,8 +15,12 @@ using namespace std::chrono_literals;
 using hecs::Entity;
 
 PixelData read_image_data(std::string filepath);
+void move_in_orbit(Entity e, int gap, hecs::SpriteComponentManager& spcm, hecs::Transform2dComponentManager& tfcm);
 
 int main() {
+
+    auto delay = 0ms;
+
     ConhostController cc;
     ConsoleRenderer rr{ &cc };
     cc.maximize();
@@ -39,37 +43,133 @@ int main() {
     spcomp = spcm.add_component(background,background_img);
     tfcomp = tfcm.add_component(background,0,0);
 
+    Entity smiley2 = 2;
+    spcomp = spcm.add_component(smiley2, smiley_img);
+    tfcomp = tfcm.add_component(smiley2, background, 200, 125);
+
     Entity smiley1 = 1;
     spcomp = spcm.add_component(smiley1,smiley_img);
-    tfcomp = tfcm.add_component(smiley1,background,50,150);
+    tfcomp = tfcm.add_component(smiley1,smiley2);
 
-    Entity smiley2 = 2;
-    spcomp = spcm.add_component(smiley2,smiley_img);
-    tfcomp = tfcm.add_component(smiley2,background,300,20);
+    int smiley1_gap = 50;
+    tfcm.set_local(smiley1, Coord{ -smiley_img.width - smiley1_gap, -smiley_img.height - smiley1_gap });
 
     Entity minion1 = 3;
     spcomp = spcm.add_component(minion1, green_minion_img);
-    tfcomp = tfcm.add_component(minion1, smiley1, -green_minion_img.width-1, -green_minion_img.height-1);
+    tfcomp = tfcm.add_component(minion1, smiley1);
 
-    Entity minion2 = 4;
+    int minion1_gap = 16;
+    tfcm.set_local(minion1, Coord{ -green_minion_img.width - minion1_gap, -green_minion_img.height - minion1_gap });
+
+    /*Entity minion2 = 4;
     spcomp = spcm.add_component(minion2, green_minion_img);
-    tfcomp = tfcm.add_component(minion2, smiley1, smiley_img.width + 1, smiley_img.height + 1);
+    tfcomp = tfcm.add_component(minion2, smiley1, smiley_img.width + 1, smiley_img.height + 1);*/
 
     Entity subminion1 = 5;
     spcomp = spcm.add_component(subminion1, pink_minion_img);
-    tfcomp = tfcm.add_component(subminion1, minion1, -pink_minion_img.width - 1, green_minion_img.height + 1);
+    tfcomp = tfcm.add_component(subminion1, minion1);
 
-    rr.render(&spcm, &tfcm);
-    cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);
-    std::cin.get();
+    int subminion1_gap = 3;
+    tfcm.set_local(subminion1, Coord{ -pink_minion_img.width - subminion1_gap, -pink_minion_img.height - subminion1_gap });
 
-    tfcm.move(1, Coord{ 170,0 });
-    rr.render(&spcm, &tfcm);
-    cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);
-    std::cin.get();
+    int count = 0;
+    while (true) {
+        sleep_for(delay);
+        if (count % 2 == 0) {
+            move_in_orbit(minion1, minion1_gap, spcm, tfcm);
+        }
+        if (count % 4 == 0) {
+            move_in_orbit(smiley1, smiley1_gap, spcm, tfcm);
+            count = 0;
+        }
+        move_in_orbit(subminion1, subminion1_gap, spcm, tfcm);
+        rr.render(&spcm, &tfcm);
+        ++count;
+    }
+    //cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);
+    //std::cin.get();
+    //sleep_for(delay);
 
-    tfcm.move(3, Coord{ 0,smiley_img.height + 1 + green_minion_img.height + 1 });
-    rr.render(&spcm, &tfcm);
+    //tfcm.move(1, Coord{ 170,0 });
+    //rr.render(&spcm, &tfcm);
+    ////cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);
+
+    //sleep_for(delay);
+
+    //tfcm.move(3, Coord{ 0,smiley_img.height + 1 + green_minion_img.height + 1 });
+    //rr.render(&spcm, &tfcm);
+
+    /*Coord current_pos = tfcm.get_component(minion1)->local;
+    short speed1 = 1;
+    short speed2 = 3;
+    
+    Coord north{ 0,-speed1 };
+    Coord south{ 0,speed1 };
+    Coord east{ speed1, 0 };
+    Coord west{ -speed1, 0 };
+
+    Entity parent = tfcm.get_entity_by_component_index(tfcm.get_component(minion1)->parent);
+
+    int gap = 1;
+    short w_self = spcm.get_component(minion1)->pixel_data.width;
+    short h_self = spcm.get_component(minion1)->pixel_data.height;
+    short w_parent = spcm.get_component(parent)->pixel_data.width;
+    short h_parent = spcm.get_component(parent)->pixel_data.height;
+
+    Coord top_right = Coord{ w_parent + gap, -h_self - gap };
+    Coord bottom_right{ w_parent + gap, h_parent + gap };
+    Coord bottom_left{ -w_self - gap, h_parent + gap };
+    Coord top_left{ -w_self - gap, -h_self - gap };
+
+    tfcm.set_local(minion1, top_left);
+
+    while (true) {
+        while (current_pos.x < top_right.x) {
+            if (current_pos.x + speed2 > top_right.x) {
+                tfcm.move(minion1, { top_right.x - current_pos.x, 0 });
+            }
+            else tfcm.move(minion1, { speed2, 0 });
+            current_pos = tfcm.get_component(minion1)->local;
+            tfcm.move(smiley1, { speed1, 0 });
+
+            rr.render(&spcm, &tfcm);
+            sleep_for(delay);
+        }
+        while (current_pos.y < bottom_right.y) {
+            if (current_pos.y + speed2 > bottom_right.y) {
+                tfcm.move(minion1, { 0, bottom_right.y - current_pos.y });
+            }
+            else tfcm.move(minion1, { 0,speed2 });
+            current_pos = tfcm.get_component(minion1)->local;
+            tfcm.move(smiley1, { speed1, 0 });
+
+            rr.render(&spcm, &tfcm);
+            sleep_for(delay);
+        }
+        while (current_pos.x > bottom_left.x) {
+            if (current_pos.x - speed2 < bottom_left.x) {
+                tfcm.move(minion1, { bottom_left.x - current_pos.x, 0 });
+            }
+            else tfcm.move(minion1, { -speed2, 0 });
+            current_pos = tfcm.get_component(minion1)->local;
+            tfcm.move(smiley1, { speed1, 0 });
+
+            rr.render(&spcm, &tfcm);
+            sleep_for(delay);
+        }
+        while (current_pos.y > top_left.y) {
+            if (current_pos.y - speed2 < top_left.y) {
+                tfcm.move(minion1, { 0, top_left.y - current_pos.y });
+            }
+            else tfcm.move(minion1, { 0,-speed2 });
+            current_pos = tfcm.get_component(minion1)->local;
+            tfcm.move(smiley1, { speed1, 0 });
+
+            rr.render(&spcm, &tfcm);
+            sleep_for(delay);
+        }
+    }
+*/
 
     cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);
 }
@@ -110,4 +210,46 @@ PixelData read_image_data(std::string filepath) {
     }
     ifs.close();
     return image;
+}
+
+void move_in_orbit(Entity e, int gap, hecs::SpriteComponentManager& spcm, hecs::Transform2dComponentManager& tfcm) {
+    Coord current_pos = tfcm.get_component(e)->local;
+
+    Entity parent = tfcm.get_entity_by_component_index(tfcm.get_component(e)->parent);
+
+    short speed = 1;
+    short w_self = spcm.get_component(e)->pixel_data.width;
+    short h_self = spcm.get_component(e)->pixel_data.height;
+    short w_parent = spcm.get_component(parent)->pixel_data.width;
+    short h_parent = spcm.get_component(parent)->pixel_data.height;
+
+    Coord top_right = Coord{ w_parent + gap, -h_self - gap };
+    Coord bottom_right{ w_parent + gap, h_parent + gap };
+    Coord bottom_left{ -w_self - gap, h_parent + gap };
+    Coord top_left{ -w_self - gap, -h_self - gap };
+
+    if (current_pos.x < top_right.x && current_pos.y == top_right.y) {
+        if (current_pos.x + speed > top_right.x) {
+            tfcm.move(e, { top_right.x - current_pos.x, 0 });
+        }
+        else tfcm.move(e, { speed, 0 });
+    }
+    else if (current_pos.x == bottom_right.x && current_pos.y < bottom_right.y) {
+        if (current_pos.y + speed > bottom_right.y) {
+            tfcm.move(e, { 0, bottom_right.y - current_pos.y });
+        }
+        else tfcm.move(e, { 0,speed });
+    }
+    else if (current_pos.x > bottom_left.x && current_pos.y == bottom_left.y) {
+        if (current_pos.x - speed < bottom_left.x) {
+            tfcm.move(e, { bottom_left.x - current_pos.x, 0 });
+        }
+        else tfcm.move(e, { -speed, 0 });
+    }
+    else if (current_pos.x == top_left.x && current_pos.y > top_left.y) {
+        if (current_pos.y - speed < top_left.y) {
+            tfcm.move(e, { 0, top_left.y - current_pos.y });
+        }
+        else tfcm.move(e, { 0,-speed });
+    }
 }

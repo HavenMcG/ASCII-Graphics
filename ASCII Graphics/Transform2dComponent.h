@@ -28,6 +28,8 @@ namespace hecs {
 		Transform2dComponent* add_component(Entity owner, Entity parent, short local_x, short local_y);
 		void remove_component(Entity e);
 		void move(Entity e, Coord change);
+		void set_local(Entity e, Coord new_local);
+		Entity get_entity_by_component_index(int i);
 	private:
 		Vector<Transform2dComponent> m_components;
 		Map<Entity, int> m_map;

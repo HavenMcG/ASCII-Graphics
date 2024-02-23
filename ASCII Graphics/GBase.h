@@ -16,6 +16,8 @@ struct Coord {
 	Coord(int xx, short yy) : x{ static_cast<short>(xx) }, y{ yy } {}
 };
 Coord operator+(Coord lhs, Coord rhs);
+bool operator==(Coord lhs, Coord rhs);
+bool operator!=(Coord lhs, Coord rhs);
 
 struct Color {
 	int r, g, b;

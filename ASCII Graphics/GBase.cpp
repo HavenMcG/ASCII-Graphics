@@ -4,6 +4,14 @@ Coord operator+(Coord lhs, Coord rhs) {
 	return Coord{ lhs.x + rhs.x, lhs.y + rhs.y };
 }
 
+bool operator==(Coord lhs, Coord rhs) {
+	return (lhs.x == rhs.x && lhs.y == rhs.y);
+}
+
+bool operator!=(Coord lhs, Coord rhs) {
+	return !(lhs == rhs);
+}
+
 bool operator==(const Color lhs, const Color rhs) {
 	return (lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b);
 }

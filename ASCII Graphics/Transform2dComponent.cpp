@@ -122,6 +122,18 @@ namespace hecs {
         }
     }
 
+    void Transform2dComponentManager::set_local(Entity e, Coord new_local) {
+        int this_i = m_map[e];
+        Vector<Transform2dComponent>& c = m_components; // for readability
+        short x_change = new_local.x - c[this_i].local.x;
+        short y_change = new_local.y - c[this_i].local.y;
+        move(e, Coord{ x_change,y_change });
+    }
+
+    Entity Transform2dComponentManager::get_entity_by_component_index(int i) {
+        return m_components[i].owner;
+    }
+
     void Transform2dComponentManager::update_world_pos(int index, Coord change) {
         int& this_i = index;
         Vector<Transform2dComponent>& c = m_components; // for readability
