@@ -1,6 +1,5 @@
 
 #include "ConhostController.h"
-#include "Renderer.h"
 #include "GBase.h"
 #include <vector>
 #include <iostream>
@@ -10,7 +9,7 @@
 #include <string>
 #include "RenderSystem.h"
 
-using ConArt::ConsoleRenderer;
+using hecs::ConsoleRenderer;
 using namespace std::this_thread;
 using namespace std::chrono_literals;
 using hecs::Entity;
@@ -23,10 +22,11 @@ int main() {
     cc.maximize();
     cc.set_resolution(600, 300+8);
 
-    PixelData background = read_image_data("../seasidegarden.bmp");
-    PixelData img = read_image_data("../test01.bmp");
+    PixelData background_img = read_image_data("../seasidegarden.bmp");
+    PixelData smiley_img = read_image_data("../test01.bmp");
+    PixelData green_minion_img = read_image_data("../GreenMinion.bmp");
+    PixelData pink_minion_img = read_image_data("../PinkMinion.bmp");
 
-    hecs::RenderSystem rsys;
     hecs::SpriteComponentManager spcm;
     hecs::Transform2dComponentManager tfcm;
 
@@ -35,28 +35,50 @@ int main() {
     hecs::SpriteComponent* spcomp;
     hecs::Transform2dComponent* tfcomp;
 
-    Entity e_background = 0;
-    spcomp = spcm.add_component(e_background,background);
-    tfcomp = tfcm.add_component(e_background,0,0);
+    Entity background = 0;
+    spcomp = spcm.add_component(background,background_img);
+    tfcomp = tfcm.add_component(background,0,0);
 
-    Entity e_1 = 1;
-    spcomp = spcm.add_component(e_1,img);
-    tfcomp = tfcm.add_component(e_1,50,150);
+    Entity smiley1 = 1;
+    spcomp = spcm.add_component(smiley1,smiley_img);
+    tfcomp = tfcm.add_component(smiley1,background,50,150);
 
-    Entity e_2 = 2;
-    spcomp = spcm.add_component(e_2,img);
-    tfcomp = tfcm.add_component(e_2,300,100);
+    Entity smiley2 = 2;
+    spcomp = spcm.add_component(smiley2,smiley_img);
+    tfcomp = tfcm.add_component(smiley2,background,300,20);
 
-    rsys.render(rr, spcm, tfcm);
+    Entity minion1 = 3;
+    spcomp = spcm.add_component(minion1, green_minion_img);
+    tfcomp = tfcm.add_component(minion1, smiley1, -green_minion_img.width-1, -green_minion_img.height-1);
 
-    cc.move_cursor_to(cc.canvas_width() - 1, cc.canvas_height() - 1 - 8);
+    Entity minion2 = 4;
+    spcomp = spcm.add_component(minion2, green_minion_img);
+    tfcomp = tfcm.add_component(minion2, smiley1, smiley_img.width + 1, smiley_img.height + 1);
+
+    Entity subminion1 = 5;
+    spcomp = spcm.add_component(subminion1, pink_minion_img);
+    tfcomp = tfcm.add_component(subminion1, minion1, -pink_minion_img.width - 1, green_minion_img.height + 1);
+
+    rr.render(&spcm, &tfcm);
+    cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);
+    std::cin.get();
+
+    tfcm.move(1, Coord{ 170,0 });
+    rr.render(&spcm, &tfcm);
+    cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);
+    std::cin.get();
+
+    tfcm.move(3, Coord{ 0,smiley_img.height + 1 + green_minion_img.height + 1 });
+    rr.render(&spcm, &tfcm);
+
+    cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);
 }
 
 
 PixelData read_image_data(std::string filepath) {
     std::ifstream ifs;
     ifs.open(filepath, std::ios::binary);
-    if (!ifs) //do something;
+    if (!ifs); //do something
 
     ifs.seekg(2);
     int file_size;

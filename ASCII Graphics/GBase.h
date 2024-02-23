@@ -15,6 +15,7 @@ struct Coord {
 	Coord(short xx, int yy) : x{ xx }, y{ static_cast<short>(yy) } {}
 	Coord(int xx, short yy) : x{ static_cast<short>(xx) }, y{ yy } {}
 };
+Coord operator+(Coord lhs, Coord rhs);
 
 struct Color {
 	int r, g, b;
@@ -33,4 +34,6 @@ struct PixelData {
 	PixelData(short ww, short hh) : width{ ww }, height{ hh } {
 		data = std::vector<Color>(ww * hh);
 	}
+	Color& pixel(short x, short y);
+	Color& pixel(Coord coord);
 };

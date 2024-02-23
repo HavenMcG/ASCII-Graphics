@@ -134,7 +134,6 @@
   <ItemGroup>
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="NameComponent.cpp" />
-    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="GBase.cpp" />
     <ClCompile Include="main.cpp" />
@@ -146,7 +145,6 @@
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="HECS.h" />
     <ClInclude Include="NameComponent.h" />
-    <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="ConhostController.h" />
     <ClInclude Include="GBase.h" />

@@ -6,9 +6,9 @@ namespace hecs {
         return &m_components[m_map[e]];
     }
 
-    const Vector<SpriteComponent>& SpriteComponentManager::components() {
-        return m_components;
-    }
+    /*const Vector<SpriteComponent>* SpriteComponentManager::components() {
+        return &m_components;
+    }*/
 
     bool SpriteComponentManager::has_component(Entity e) {
         return (m_map.find(e) != m_map.end());
