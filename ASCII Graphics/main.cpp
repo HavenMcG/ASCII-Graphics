@@ -75,12 +75,12 @@ int main() {
     int count = 0;
     while (true) {
         sleep_for(delay);
-        if (count % 2 == 0) {
-            move_in_orbit(minion1, minion1_gap, spcm, tfcm);
-        }
-        if (count % 4 == 0) {
+        if (count == 4) {
             move_in_orbit(smiley1, smiley1_gap, spcm, tfcm);
             count = 0;
+        }
+        if (count % 2 == 0) {
+            move_in_orbit(minion1, minion1_gap, spcm, tfcm);
         }
         move_in_orbit(subminion1, subminion1_gap, spcm, tfcm);
         rr.render(&spcm, &tfcm);
