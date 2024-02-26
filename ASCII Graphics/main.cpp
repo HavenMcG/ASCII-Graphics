@@ -23,9 +23,8 @@ int main() {
 
     ConhostController cc;
     ConsoleRenderer rr{ &cc };
-    cc.maximize();
-    std::cin.get();
-    cc.set_resolution(600, 300+8);
+    //cc.maximize();
+    //cc.set_resolution(600, 300+8);
 
     PixelData background_img = read_image_data("../seasidegarden.bmp");
     PixelData smiley_img = read_image_data("../test01.bmp");
@@ -74,21 +73,14 @@ int main() {
     tfcm.set_local(subminion1, Coord{ -pink_minion_img.width - subminion1_gap, -pink_minion_img.height - subminion1_gap });
 
     //rr.render(&spcm, &tfcm);
-    /*for (int i = 0; i < 10000; ++i) {
-        cc.write("I");
-    }
-    
-    cc.switch_target_buffer();
+
+    //rr.draw(smiley_img, Coord{0,0});
+    cc.write("Hello");
     for (int i = 0; i < 10000; ++i) {
         cc.write("X");
     }
-
-    while (true) {
-        std::cin.get();
-        cc.switch_display_buffer();
-    }*/
-
-    int count = 0;
+    std::cin.get();
+    /*int count = 0;
     while (true) {
         sleep_for(delay);
         if (count == 4) {
@@ -102,7 +94,7 @@ int main() {
         rr.render(&spcm, &tfcm);
         ++count;
     }
-    cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);
+    cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);*/
     //std::cin.get();
     //sleep_for(delay);
 
