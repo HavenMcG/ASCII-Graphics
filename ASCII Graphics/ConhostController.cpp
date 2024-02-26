@@ -6,6 +6,12 @@ static HANDLE s_hOut;
 static HANDLE s_hIn;
 static HWND s_consoleWin;
 
+static HANDLE s_buffer;
+
+static HANDLE* s_target_buffer;
+static HANDLE* s_inactive_buffer;
+static HANDLE* s_current_display_buffer;
+
 Coord to_coord(COORD c) {
     return Coord{ c.X, c.Y };
 }
@@ -25,7 +31,32 @@ ConhostController::ConhostController() {
         // TODO: throw suitable exception
     }
 
-    enable_virtual_terminal(); // should this be here?
+    //enable_virtual_terminal(); // should this be here?
+    s_buffer = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+    s_hOut = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+    s_target_buffer = &s_hOut;
+    s_inactive_buffer = &s_buffer;
+    s_current_display_buffer = &s_hOut;
+    switch_display_buffer();
+}
+
+void ConhostController::switch_target_buffer() {
+    if (s_target_buffer == &s_hOut) {
+        s_target_buffer = &s_buffer;
+        s_inactive_buffer = &s_hOut;
+    }
+    else {
+        s_target_buffer = &s_hOut;
+        s_inactive_buffer = &s_buffer;
+    }
+}
+
+void ConhostController::switch_display_buffer() {
+    if (s_current_display_buffer == &s_hOut) {
+        s_current_display_buffer = &s_buffer;
+    }
+    else s_current_display_buffer = &s_hOut;
+    SetConsoleActiveScreenBuffer(*s_current_display_buffer);
 }
 
 void ConhostController::maximize() {
@@ -34,21 +65,21 @@ void ConhostController::maximize() {
 
 Coord ConhostController::canvas_size() {
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(s_hOut, &scrBufferInfo);
+    GetConsoleScreenBufferInfo(*s_target_buffer, &scrBufferInfo);
     return to_coord(scrBufferInfo.dwSize);
 }
 
 short ConhostController::canvas_width()
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(s_hOut, &info);
+    GetConsoleScreenBufferInfo(*s_target_buffer, &info);
     return info.dwSize.X;
 }
 
 short ConhostController::canvas_height()
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(s_hOut, &info);
+    GetConsoleScreenBufferInfo(*s_target_buffer, &info);
     return info.dwSize.Y;
 }
 
@@ -69,7 +100,7 @@ void ConhostController::set_resolution(short width, short height) {
     if (charHeight > charWidth) charWidth = charHeight;
     else if (charWidth > charHeight) charHeight = charWidth;
     //m_log << "Desired char size: " << charWidth << " x " << charHeight << '\n';
-    set_font_size(charWidth, charHeight);
+    set_font_size(2, 2);
 
     // verify that it worked
     //m_log << "Actual font size: " << font_size().x << " x " << font_size().y << '\n';
@@ -77,8 +108,13 @@ void ConhostController::set_resolution(short width, short height) {
     // shrink the window to prevent error
     SMALL_RECT rect = { 0,0,0,0 };
 
-    if (!SetConsoleWindowInfo(s_hOut, TRUE, &rect)) {
+    if (!SetConsoleWindowInfo(*s_target_buffer, TRUE, &rect)) {
         //m_log << "shrinking window size failed: " << GetLastError() << '\n';
+        exit(0);
+    }
+    if (!SetConsoleWindowInfo(*s_inactive_buffer, TRUE, &rect)) {
+        //m_log << "shrinking window size failed: " << GetLastError() << '\n';
+        exit(0);
     }
 
     // set new buffer size
@@ -86,7 +122,7 @@ void ConhostController::set_resolution(short width, short height) {
 
     // retrieve buffer info
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(s_hOut, &scrBufferInfo);
+    GetConsoleScreenBufferInfo(*s_target_buffer, &scrBufferInfo);
 
     // now restore the window again
     SHORT maxWindowX = scrBufferInfo.dwMaximumWindowSize.X - 1;
@@ -106,14 +142,18 @@ void ConhostController::set_resolution(short width, short height) {
 
 void ConhostController::set_buffer_size(short width, short height) {
     COORD newBufferSize = { width, height };
-    if (!SetConsoleScreenBufferSize(s_hOut, newBufferSize)) {
+    if (!SetConsoleScreenBufferSize(*s_target_buffer, newBufferSize)) {
+        //m_log << "SetConsoleScreenBufferSize() failed: " << GetLastError() << '\n';
+        exit(0);
+    }
+    if (!SetConsoleScreenBufferSize(*s_inactive_buffer, newBufferSize)) {
         //m_log << "SetConsoleScreenBufferSize() failed: " << GetLastError() << '\n';
         exit(0);
     }
 
     // retrieve buffer info
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(s_hOut, &scrBufferInfo);
+    GetConsoleScreenBufferInfo(*s_target_buffer, &scrBufferInfo);
     //m_log << "Desired buffer size: " << width << " x " << height << '\n';
     //m_log << "Actual buffer size: " << scrBufferInfo.dwSize.X << " x " << scrBufferInfo.dwSize.Y << '\n';
 }
@@ -121,7 +161,11 @@ void ConhostController::set_buffer_size(short width, short height) {
 
 void ConhostController::set_bufferwindow_size(short width, short height) {
     SMALL_RECT rect = { 0,0,width,height };
-    if (!SetConsoleWindowInfo(s_hOut, TRUE, &rect)) {
+    if (!SetConsoleWindowInfo(*s_target_buffer, TRUE, &rect)) {
+        //m_log << "SetConsoleWindowInfo() failed: " << GetLastError() << '\n';
+        exit(0);
+    }
+    if (!SetConsoleWindowInfo(*s_inactive_buffer, TRUE, &rect)) {
         //m_log << "SetConsoleWindowInfo() failed: " << GetLastError() << '\n';
         exit(0);
     }
@@ -140,14 +184,15 @@ void ConhostController::set_font_size(short newWidth, short newHeight) {
     wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
     // ---------------------------
 
-    SetCurrentConsoleFontEx(s_hOut, FALSE, &cfi);
+    SetCurrentConsoleFontEx(*s_target_buffer, FALSE, &cfi);
+    SetCurrentConsoleFontEx(*s_inactive_buffer, FALSE, &cfi);
 }
 
 
 Coord ConhostController::font_size() {
     CONSOLE_FONT_INFO currentFont;
-    GetCurrentConsoleFont(s_hOut, FALSE, &currentFont);
-    COORD currentFontSize = GetConsoleFontSize(s_hOut, currentFont.nFont);
+    GetCurrentConsoleFont(*s_target_buffer, FALSE, &currentFont);
+    COORD currentFontSize = GetConsoleFontSize(*s_target_buffer, currentFont.nFont);
     return to_coord(currentFontSize);
 }
 
@@ -155,7 +200,7 @@ Coord ConhostController::font_size() {
 void ConhostController::log_debug_info() {
     // retrieve buffer info
     CONSOLE_SCREEN_BUFFER_INFO scrBufferInfo;
-    GetConsoleScreenBufferInfo(s_hOut, &scrBufferInfo);
+    GetConsoleScreenBufferInfo(*s_target_buffer, &scrBufferInfo);
 
     // get Win info
     RECT r;
@@ -165,8 +210,8 @@ void ConhostController::log_debug_info() {
 
     // get font info
     CONSOLE_FONT_INFO currentFont;
-    GetCurrentConsoleFont(s_hOut, FALSE, &currentFont);
-    COORD currentFontSize = GetConsoleFontSize(s_hOut, currentFont.nFont);
+    GetCurrentConsoleFont(*s_target_buffer, FALSE, &currentFont);
+    COORD currentFontSize = GetConsoleFontSize(*s_target_buffer, currentFont.nFont);
     int currentFontWidth = currentFontSize.X;
     int currentFontHeight = currentFontSize.Y;
 
@@ -183,7 +228,7 @@ int ConhostController::enable_virtual_terminal() {
 
     DWORD dwOriginalOutMode = 0;
     DWORD dwOriginalInMode = 0;
-    if (!GetConsoleMode(s_hOut, &dwOriginalOutMode))
+    if (!GetConsoleMode(*s_target_buffer, &dwOriginalOutMode))
     {
         return false;
     }
@@ -196,12 +241,12 @@ int ConhostController::enable_virtual_terminal() {
     DWORD dwRequestedInModes = ENABLE_VIRTUAL_TERMINAL_INPUT;
 
     DWORD dwOutMode = dwOriginalOutMode | dwRequestedOutModes;
-    if (!SetConsoleMode(s_hOut, dwOutMode))
+    if (!SetConsoleMode(*s_target_buffer, dwOutMode))
     {
         // we failed to set both modes, try to step down mode gracefully.
         dwRequestedOutModes = ENABLE_VIRTUAL_TERMINAL_PROCESSING;
         dwOutMode = dwOriginalOutMode | dwRequestedOutModes;
-        if (!SetConsoleMode(s_hOut, dwOutMode))
+        if (!SetConsoleMode(*s_target_buffer, dwOutMode))
         {
             // Failed to set any VT mode, can't do anything here.
             return -1;
@@ -241,13 +286,13 @@ void ConhostController::reset_colors()
 
 void ConhostController::write(std::string s) {
     DWORD charsWritten;
-    WriteConsoleA(s_hOut, s.c_str(), s.size(), &charsWritten, NULL);
+    WriteConsoleA(s_target_buffer, s.c_str(), s.size(), &charsWritten, NULL);
     //std::this_thread::sleep_for(10ms);
 }
 
 void ConhostController::write(char ch) {
     DWORD charsWritten;
-    WriteConsoleA(s_hOut, &ch, 1, &charsWritten, NULL);
+    WriteConsoleA(s_target_buffer, &ch, 1, &charsWritten, NULL);
     //std::this_thread::sleep_for(3ms);
 }
 
@@ -264,12 +309,12 @@ void ConhostController::set_bcolor(Color c) {
 
 Coord ConhostController::cursor_position() {
     CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(s_hOut, &info);
+    GetConsoleScreenBufferInfo(s_target_buffer, &info);
     return to_coord(info.dwCursorPosition);
 }
 
 void ConhostController::move_cursor_to(Coord new_pos) {
-    SetConsoleCursorPosition(s_hOut,to_wincoord(new_pos));
+    SetConsoleCursorPosition(s_target_buffer,to_wincoord(new_pos));
 }
 
 std::string to_ansi_fcolor(Color c) {

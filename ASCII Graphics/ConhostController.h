@@ -12,6 +12,8 @@ public:
 
 	ConhostController();
 
+	void switch_target_buffer();
+	void switch_display_buffer();
 	void write(std::string s);
 	void write(char ch);
 

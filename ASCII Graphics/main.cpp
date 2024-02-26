@@ -24,6 +24,7 @@ int main() {
     ConhostController cc;
     ConsoleRenderer rr{ &cc };
     cc.maximize();
+    std::cin.get();
     cc.set_resolution(600, 300+8);
 
     PixelData background_img = read_image_data("../seasidegarden.bmp");
@@ -72,6 +73,21 @@ int main() {
     int subminion1_gap = 3;
     tfcm.set_local(subminion1, Coord{ -pink_minion_img.width - subminion1_gap, -pink_minion_img.height - subminion1_gap });
 
+    //rr.render(&spcm, &tfcm);
+    /*for (int i = 0; i < 10000; ++i) {
+        cc.write("I");
+    }
+    
+    cc.switch_target_buffer();
+    for (int i = 0; i < 10000; ++i) {
+        cc.write("X");
+    }
+
+    while (true) {
+        std::cin.get();
+        cc.switch_display_buffer();
+    }*/
+
     int count = 0;
     while (true) {
         sleep_for(delay);
@@ -86,7 +102,7 @@ int main() {
         rr.render(&spcm, &tfcm);
         ++count;
     }
-    //cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);
+    cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);
     //std::cin.get();
     //sleep_for(delay);
 
@@ -171,7 +187,7 @@ int main() {
     }
 */
 
-    cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);
+    //cc.move_cursor_to(0, cc.canvas_height() - 1 - 6);
 }
 
 
