@@ -3,27 +3,42 @@
 
 namespace hcon {
 
-	Buffer::Buffer() {
-		m_handle = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-		if (m_handle == INVALID_HANDLE_VALUE) {
-			throw std::exception{ "CreateConsoleScreenBuffer() failed: " + GetLastError() };
+	Buffer::Buffer() : Buffer(new_handle) {}
+
+	Buffer::Buffer(HandleType ht) {
+		switch (ht) {
+			case std_output_handle:
+				m_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+				if (m_handle == INVALID_HANDLE_VALUE) {
+					throw std::exception{ "GetStdHandle() failed: " + GetLastError() };
+				}
+				m_font_info.cbSize = sizeof(CONSOLE_FONT_INFOEX); // required as per msdn documentation
+				update_buffer_info();
+				update_font_info();
+				m_htype = ht;
+				break;
+			case new_handle:
+				m_handle = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+				if (m_handle == INVALID_HANDLE_VALUE) {
+					throw std::exception{ "CreateConsoleScreenBuffer() failed: " + GetLastError() };
+				}
+				m_font_info.cbSize = sizeof(CONSOLE_FONT_INFOEX); // required as per msdn documentation
+				update_buffer_info();
+				update_font_info();
+				m_htype = ht;
+				break;
+			default:
+				throw std::exception{ "Invalid argument to Buffer(HandleType ht)" };
+				break;
 		}
-		update_buffer_info();
-		update_font_info();
 	}
 
-	Buffer Buffer::create_from_std() {
-		HANDLE h_stdout = GetStdHandle(STD_OUTPUT_HANDLE);
-		if (h_stdout == INVALID_HANDLE_VALUE) {
-			throw std::exception{ "GetStdHandle() failed: " + GetLastError() };
+	Buffer::~Buffer() {
+		if (m_htype != std_output_handle) {
+			if (!CloseHandle(m_handle)) {
+				throw std::exception{ "CloseHandle() failed: " + GetLastError() };
+			}
 		}
-		return Buffer(h_stdout);
-	}
-
-	Buffer::Buffer(HANDLE h) {
-		m_handle = h;
-		update_buffer_info();
-		update_font_info();
 	}
 
 	void Buffer::write(const std::string& s) {
@@ -38,6 +53,7 @@ namespace hcon {
 		if (!SetConsoleScreenBufferSize(m_handle, new_size)) {
 			throw std::exception{ "SetConsoleScreenBufferSize() failed: " + GetLastError() };
 		}
+		update_buffer_info();
 	}
 
 	void Buffer::set_bufferwindow_size(short width, short height) {
@@ -45,6 +61,7 @@ namespace hcon {
 		if (!SetConsoleWindowInfo(m_handle, TRUE, &new_corners)) {
 			throw std::exception{ "SetConsoleWindowInfo() failed: " + GetLastError() };
 		}
+		update_buffer_info();
 	}
 
 	void Buffer::set_font_size(short width, short height) {
@@ -53,12 +70,14 @@ namespace hcon {
 		if (!SetCurrentConsoleFontEx(m_handle, FALSE, &new_font)) {
 			throw std::exception{ "SetCurrentConsoleFontEx() failed: " + GetLastError() };
 		}
+		update_font_info();
 	}
 
 	void Buffer::set_cursor_pos(short x, short y) {
 		if (!SetConsoleCursorPosition(m_handle, COORD{ x,y })) {
 			throw std::exception{ "SetConsoleCursorPosition() failed: " + GetLastError() };
 		}
+		update_buffer_info();
 	}
 
 	void Buffer::set_fcolor(Color c) {

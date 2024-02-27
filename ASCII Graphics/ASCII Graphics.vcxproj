@@ -135,7 +135,6 @@
     <ClCompile Include="ANSI.cpp" />
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Controller.cpp" />
-    <ClCompile Include="ControllerImpl.cpp" />
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="NameComponent.cpp" />
     <ClCompile Include="RenderSystem.cpp" />

@@ -1,13 +1,16 @@
 #pragma once
 #include "ANSI.h"
+#include <memory>
 
 namespace hcon {
 
 	class ControllerImpl;
 
-	class Controller {
+	class ConhostController {
 	public:
-		Controller();
+		ConhostController();
+		~ConhostController();
+		ConhostController(const ConhostController&) = delete;
 
 		void switch_target_buffer();
 		void switch_display_buffer();
@@ -15,14 +18,14 @@ namespace hcon {
 		void write(char ch);
 
 		void set_fcolor(Color c);
-		void set_fcolor(int r, int g, int b) { set_fcolor(Color{ r,g,b }); }
+		void set_fcolor(int r, int g, int b);
 		void set_bcolor(Color c);
-		void set_bcolor(int r, int g, int b) { set_bcolor(Color{ r,g,b }); }
+		void set_bcolor(int r, int g, int b);
 		void reset_colors();
 
 		Coord cursor_position();
 		void move_cursor_to(Coord new_pos);
-		void move_cursor_to(short x, short y) { move_cursor_to(Coord{ x,y }); }
+		void move_cursor_to(short x, short y);
 
 		void maximize();
 		Coord canvas_size();
@@ -34,11 +37,8 @@ namespace hcon {
 		void set_bufferwindow_size(short width, short height);
 		void set_font_size(short width, short height);
 
-		void log_debug_info();
-
-
 	private:
-		ControllerImpl* pimpl;
-		int enable_virtual_terminal(); // p
+		ControllerImpl* pimpl; // pimpl idiom
+		//std::unique_ptr<ControllerImpl> pimpl;
 	};
 }

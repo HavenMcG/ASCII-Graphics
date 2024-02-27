@@ -17,12 +17,15 @@ namespace hcon {
 		ControllerImpl() {
 			window = GetConsoleWindow();
 			buffers = std::vector<Buffer>{};
-			buffers.push_back(Buffer::create_from_std());
-			buffers.push_back(Buffer{});
+			buffers.emplace_back(Buffer::std_output_handle);
+			buffers.emplace_back();
 			target_buffer = 0;
 			visible_buffer = 0;
+			SetConsoleActiveScreenBuffer(buffers[visible_buffer].handle());
 		}
-		//--------------------------------------------------------------------------------
+
+		//-------------------------------------------------------------------------------------------------------------
+
 		void switch_target_buffer() {
 			target_buffer += 1;
 			if (target_buffer >= buffers.size()) target_buffer = 0;
@@ -30,6 +33,7 @@ namespace hcon {
 		void switch_visible_buffer() {
 			visible_buffer += 1;
 			if (visible_buffer >= buffers.size()) visible_buffer = 0;
+			SetConsoleActiveScreenBuffer(buffers[visible_buffer].handle());
 		}
 		void write(std::string s) {
 			buffers[target_buffer].write(s);
@@ -111,7 +115,7 @@ namespace hcon {
 		void set_font_size(short width, short height) {
 			buffers[target_buffer].set_font_size(width, height);
 		}
-		//--------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------------------------------
 
 	private:
 		std::vector<Buffer> buffers;
@@ -119,4 +123,44 @@ namespace hcon {
 		int visible_buffer;
 		HWND window;
 	};
+
+	void ControllerImpl::write(std::string s) {
+		buffers[target_buffer].write(s);
+	}
+	void ControllerImpl::write(char ch) {
+		buffers[target_buffer].write(std::to_string(ch));
+	}
+
+	//===================================================================================================================================
+
+	ConhostController::ConhostController() {
+		pimpl = new ControllerImpl{};
+	}
+	ConhostController::~ConhostController() {
+		delete pimpl;
+	}
+	void ConhostController::switch_target_buffer() { pimpl->switch_target_buffer(); }
+	void ConhostController::switch_display_buffer() { pimpl->switch_visible_buffer(); }
+	void ConhostController::write(std::string s) { pimpl->write(s); }
+	void ConhostController::write(char ch) { pimpl->write(ch); }
+
+	void ConhostController::set_fcolor(Color c) { pimpl->set_fcolor(c); }
+	void ConhostController::set_fcolor(int r, int g, int b) { pimpl->set_fcolor(r, g, b); }
+	void ConhostController::set_bcolor(Color c) { pimpl->set_bcolor(c); }
+	void ConhostController::set_bcolor(int r, int g, int b) { pimpl->set_bcolor(r, g, b); }
+	void ConhostController::reset_colors() { pimpl->reset_colors(); }
+
+	Coord ConhostController::cursor_position() { return pimpl->cursor_position(); }
+	void ConhostController::move_cursor_to(Coord new_pos) { pimpl->move_cursor_to(new_pos); }
+	void ConhostController::move_cursor_to(short x, short y) { pimpl->move_cursor_to(x, y); }
+
+	void ConhostController::maximize() { pimpl->maximize(); }
+	Coord ConhostController::canvas_size() { return pimpl->canvas_size(); }
+	short ConhostController::canvas_width() { return pimpl->canvas_width(); }
+	short ConhostController::canvas_height() { return pimpl->canvas_height(); }
+	Coord ConhostController::font_size() { return pimpl->font_size(); }
+	void ConhostController::set_resolution(short width, short height) { pimpl->set_resolution(width, height); }
+	void ConhostController::set_buffer_size(short width, short height) { pimpl->set_buffer_size(width, height); }
+	void ConhostController::set_bufferwindow_size(short width, short height) { pimpl->set_bufferwindow_size(width, height); }
+	void ConhostController::set_font_size(short width, short height) { pimpl->set_font_size(width, height); }
 }

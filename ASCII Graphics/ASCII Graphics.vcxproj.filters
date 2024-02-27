@@ -49,9 +49,6 @@
     <ClCompile Include="Controller.cpp">
       <Filter>Conhost</Filter>
     </ClCompile>
-    <ClCompile Include="ControllerImpl.cpp">
-      <Filter>Conhost</Filter>
-    </ClCompile>
     <ClCompile Include="Buffer.cpp">
       <Filter>Conhost</Filter>
     </ClCompile>

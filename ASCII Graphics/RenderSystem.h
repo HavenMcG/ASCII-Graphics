@@ -2,9 +2,12 @@
 #include "SpriteComponent.h"
 #include "Transform2dComponent.h"
 //#include "Renderer.h"
-#include "ConhostController.h"
+#include "Controller.h"
 
 namespace hecs {
+	using RenderCode = std::vector<std::string>;
+	using hcon::ConhostController;
+	using hcon::to_ansi_bcolor;
 
 	class ConsoleRenderer {
 	public:

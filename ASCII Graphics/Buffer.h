@@ -7,8 +7,16 @@ namespace hcon {
 
 	class Buffer {
 	public:
+		enum HandleType {
+			std_output_handle,
+			new_handle
+		};
 		Buffer();
-		static Buffer create_from_std();
+		Buffer(HandleType ht);
+		Buffer(const Buffer&) = delete;
+		Buffer(Buffer&&) = default;
+		~Buffer();
+
 		void write(const std::string& s);
 		void set_buffer_size(short width, short height);
 		void set_bufferwindow_size(short width, short height);
@@ -29,12 +37,13 @@ namespace hcon {
 		COORD font_size() const { return m_font_info.dwFontSize; }
 		CONSOLE_SCREEN_BUFFER_INFO buffer_info() const { return m_buffer_info; }
 		CONSOLE_FONT_INFOEX font_info() const { return m_font_info; }
+
 	private:
 		HANDLE m_handle;
 		CONSOLE_SCREEN_BUFFER_INFO m_buffer_info;
 		CONSOLE_FONT_INFOEX m_font_info;
+		HandleType m_htype;
 		void update_buffer_info();
 		void update_font_info();
-		Buffer(HANDLE h);
 	};
 }
