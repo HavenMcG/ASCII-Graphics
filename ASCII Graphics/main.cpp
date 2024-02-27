@@ -9,7 +9,6 @@
 #include <string>
 #include "RenderSystem.h"
 
-using hcon::ConhostController;
 using hecs::ConsoleRenderer;
 using namespace std::this_thread;
 using namespace std::chrono_literals;
@@ -20,10 +19,10 @@ void move_in_orbit(Entity e, int gap, hecs::SpriteComponentManager& spcm, hecs::
 
 int main() {
 
-    ConhostController cc;
+    hcon::Controller cc;
     ConsoleRenderer rr{ &cc };
-    //cc.maximize();
-    //cc.set_resolution(600, 300+8);
+    cc.set_resolution(600, 300+8);
+    cc.maximize();
 
     PixelData background_img = read_image_data("../seasidegarden.bmp");
     PixelData smiley_img = read_image_data("../test01.bmp");
@@ -43,7 +42,6 @@ int main() {
     //cc.move_cursor_to(0, 0);
     std::cin.get();
 }
-
 
 PixelData read_image_data(std::string filepath) {
     std::ifstream ifs;

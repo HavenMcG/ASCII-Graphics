@@ -3,7 +3,7 @@
 
 namespace hcon {
 
-	Buffer::Buffer() : Buffer(new_handle) {}
+	Buffer::Buffer() : Buffer::Buffer(new_handle) {}
 
 	Buffer::Buffer(HandleType ht) {
 		switch (ht) {

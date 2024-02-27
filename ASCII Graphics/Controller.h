@@ -1,16 +1,15 @@
 #pragma once
 #include "ANSI.h"
-#include <memory>
 
 namespace hcon {
 
 	class ControllerImpl;
 
-	class ConhostController {
+	class Controller {
 	public:
-		ConhostController();
-		~ConhostController();
-		ConhostController(const ConhostController&) = delete;
+		Controller();
+		~Controller();
+		Controller(const Controller&) = delete;
 
 		void switch_target_buffer();
 		void switch_display_buffer();

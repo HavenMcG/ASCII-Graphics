@@ -1,9 +1,5 @@
 #include "RenderSystem.h"
 
-//temp
-#include <iostream>
-using std::cout;
-
 namespace hecs {
 	void ConsoleRenderer::render(SpriteComponentManager* sprite_manager, Transform2dComponentManager* transform_manager) {
 
