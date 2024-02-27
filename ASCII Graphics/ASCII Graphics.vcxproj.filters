@@ -17,6 +17,12 @@
     <Filter Include="Core">
       <UniqueIdentifier>{1e5479f4-a704-4132-951c-f938a6e1e933}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Conhost">
+      <UniqueIdentifier>{76d2f9cc-174f-492d-8248-1b3d9d1e7093}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Conhost\Legacy">
+      <UniqueIdentifier>{9c3f9cc1-5aa4-4ce3-bfde-6008b2ba9f8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EntityManager.cpp">
@@ -34,14 +40,26 @@
     <ClCompile Include="RenderSystem.cpp">
       <Filter>HECS\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="ConhostController.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="GBase.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller.cpp">
+      <Filter>Conhost</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerImpl.cpp">
+      <Filter>Conhost</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer.cpp">
+      <Filter>Conhost</Filter>
+    </ClCompile>
+    <ClCompile Include="ConhostController.cpp">
+      <Filter>Conhost\Legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="ANSI.cpp">
+      <Filter>Conhost</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -63,11 +81,20 @@
     <ClInclude Include="RenderSystem.h">
       <Filter>HECS\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="ConhostController.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="GBase.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller.h">
+      <Filter>Conhost</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Conhost</Filter>
+    </ClInclude>
+    <ClInclude Include="ConhostController.h">
+      <Filter>Conhost\Legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="ANSI.h">
+      <Filter>Conhost</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

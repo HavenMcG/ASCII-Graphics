@@ -23,8 +23,8 @@ int main() {
 
     ConhostController cc;
     ConsoleRenderer rr{ &cc };
-    //cc.maximize();
-    //cc.set_resolution(600, 300+8);
+    cc.maximize();
+    cc.set_resolution(600, 300+8);
 
     PixelData background_img = read_image_data("../seasidegarden.bmp");
     PixelData smiley_img = read_image_data("../test01.bmp");
@@ -34,8 +34,6 @@ int main() {
     hecs::SpriteComponentManager spcm;
     hecs::Transform2dComponentManager tfcm;
 
-    std::vector<Entity> Entities;
-
     hecs::SpriteComponent* spcomp;
     hecs::Transform2dComponent* tfcomp;
 
@@ -43,43 +41,41 @@ int main() {
     spcomp = spcm.add_component(background,background_img);
     tfcomp = tfcm.add_component(background,0,0);
 
-    Entity smiley2 = 2;
-    spcomp = spcm.add_component(smiley2, smiley_img);
-    tfcomp = tfcm.add_component(smiley2, background, 200, 125);
+    //Entity smiley2 = 2;
+    //spcomp = spcm.add_component(smiley2, smiley_img);
+    //tfcomp = tfcm.add_component(smiley2, background, 150, 100);
 
-    Entity smiley1 = 1;
-    spcomp = spcm.add_component(smiley1,smiley_img);
-    tfcomp = tfcm.add_component(smiley1,smiley2);
+    //Entity smiley1 = 1;
+    //spcomp = spcm.add_component(smiley1,smiley_img);
+    //tfcomp = tfcm.add_component(smiley1,smiley2);
 
-    int smiley1_gap = 50;
-    tfcm.set_local(smiley1, Coord{ -smiley_img.width - smiley1_gap, -smiley_img.height - smiley1_gap });
+    //int smiley1_gap = 50;
+    //tfcm.set_local(smiley1, Coord{ -smiley_img.width - smiley1_gap, -smiley_img.height - smiley1_gap });
 
-    Entity minion1 = 3;
-    spcomp = spcm.add_component(minion1, green_minion_img);
-    tfcomp = tfcm.add_component(minion1, smiley1);
+    //Entity minion1 = 3;
+    //spcomp = spcm.add_component(minion1, green_minion_img);
+    //tfcomp = tfcm.add_component(minion1, smiley1);
 
-    int minion1_gap = 16;
-    tfcm.set_local(minion1, Coord{ -green_minion_img.width - minion1_gap, -green_minion_img.height - minion1_gap });
+    //int minion1_gap = 16;
+    //tfcm.set_local(minion1, Coord{ -green_minion_img.width - minion1_gap, -green_minion_img.height - minion1_gap });
 
-    /*Entity minion2 = 4;
-    spcomp = spcm.add_component(minion2, green_minion_img);
-    tfcomp = tfcm.add_component(minion2, smiley1, smiley_img.width + 1, smiley_img.height + 1);*/
+    //Entity minion2 = 4;
+    //spcomp = spcm.add_component(minion2, green_minion_img);
+    //tfcomp = tfcm.add_component(minion2, smiley1, smiley_img.width + 1, smiley_img.height + 1);
 
-    Entity subminion1 = 5;
-    spcomp = spcm.add_component(subminion1, pink_minion_img);
-    tfcomp = tfcm.add_component(subminion1, minion1);
+    //Entity subminion1 = 5;
+    //spcomp = spcm.add_component(subminion1, pink_minion_img);
+    //tfcomp = tfcm.add_component(subminion1, minion1);
 
-    int subminion1_gap = 3;
-    tfcm.set_local(subminion1, Coord{ -pink_minion_img.width - subminion1_gap, -pink_minion_img.height - subminion1_gap });
+    //int subminion1_gap = 3;
+    //tfcm.set_local(subminion1, Coord{ -pink_minion_img.width - subminion1_gap, -pink_minion_img.height - subminion1_gap });
 
-    //rr.render(&spcm, &tfcm);
+    rr.render(&spcm, &tfcm);
+    cc.move_cursor_to(0, 0);
+    std::cin.get();
 
     //rr.draw(smiley_img, Coord{0,0});
-    cc.write("Hello");
-    for (int i = 0; i < 10000; ++i) {
-        cc.write("X");
-    }
-    std::cin.get();
+    
     /*int count = 0;
     while (true) {
         sleep_for(delay);

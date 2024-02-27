@@ -1,6 +1,7 @@
 
 #include "ConhostController.h"
 #include <windows.h>
+#include <iostream>
 
 static HANDLE s_hOut;
 static HANDLE s_hIn;
@@ -11,6 +12,10 @@ static HANDLE s_buffer;
 static HANDLE* s_target_buffer_p;
 static HANDLE* s_inactive_buffer_p;
 static HANDLE* s_current_display_buffer_p;
+
+static bool s_hOut_bufferwindow_set = false;
+static bool s_buffer_bufferwindow_set = false;
+
 
 Coord to_coord(COORD c) {
     return Coord{ c.X, c.Y };
@@ -109,11 +114,11 @@ void ConhostController::set_resolution(short width, short height) {
     SMALL_RECT rect = { 0,0,0,0 };
 
     if (!SetConsoleWindowInfo(*s_target_buffer_p, TRUE, &rect)) {
-        //m_log << "shrinking window size failed: " << GetLastError() << '\n';
+        std::cout << "shrinking window size failed: " << GetLastError() << '\n';
         exit(0);
     }
     if (!SetConsoleWindowInfo(*s_inactive_buffer_p, TRUE, &rect)) {
-        //m_log << "shrinking window size failed: " << GetLastError() << '\n';
+        std::cout << "shrinking window size failed: " << GetLastError() << '\n';
         exit(0);
     }
 
@@ -128,7 +133,7 @@ void ConhostController::set_resolution(short width, short height) {
     SHORT maxWindowX = scrBufferInfo.dwMaximumWindowSize.X - 1;
     SHORT maxWindowY = scrBufferInfo.dwMaximumWindowSize.Y - 1;
      //m_log << "Restore dimensions: " << maxWindowX << " x " << maxWindowY << '\n'; // why 67??
-    set_bufferwindow_size(maxWindowX, maxWindowY);
+    //set_bufferwindow_size(maxWindowX, maxWindowY);
 
     // print extra debug info
 
@@ -136,18 +141,18 @@ void ConhostController::set_resolution(short width, short height) {
     //m_log << "Char size * buffer size: " << charWidth * scrBufferInfo.dwSize.X << " x " << charHeight * scrBufferInfo.dwSize.Y << '\n';
 
     // hide scroll bars
-    ShowScrollBar(s_consoleWin, SB_BOTH, FALSE);
+    //ShowScrollBar(s_consoleWin, SB_BOTH, FALSE);
 }
 
 
 void ConhostController::set_buffer_size(short width, short height) {
     COORD newBufferSize = { width, height };
     if (!SetConsoleScreenBufferSize(*s_target_buffer_p, newBufferSize)) {
-        //m_log << "SetConsoleScreenBufferSize() failed: " << GetLastError() << '\n';
+        std::cout << "SetConsoleScreenBufferSize() failed: " << GetLastError() << '\n';
         exit(0);
     }
     if (!SetConsoleScreenBufferSize(*s_inactive_buffer_p, newBufferSize)) {
-        //m_log << "SetConsoleScreenBufferSize() failed: " << GetLastError() << '\n';
+        std::cout << "SetConsoleScreenBufferSize() failed: " << GetLastError() << '\n';
         exit(0);
     }
 
@@ -162,11 +167,11 @@ void ConhostController::set_buffer_size(short width, short height) {
 void ConhostController::set_bufferwindow_size(short width, short height) {
     SMALL_RECT rect = { 0,0,width,height };
     if (!SetConsoleWindowInfo(*s_target_buffer_p, TRUE, &rect)) {
-        //m_log << "SetConsoleWindowInfo() failed: " << GetLastError() << '\n';
+        std::cout << "SetConsoleWindowInfo() failed for target: " << GetLastError() << '\n';
         exit(0);
     }
     if (!SetConsoleWindowInfo(*s_inactive_buffer_p, TRUE, &rect)) {
-        //m_log << "SetConsoleWindowInfo() failed: " << GetLastError() << '\n';
+        std::cout << "SetConsoleWindowInfo() failed for inactive: " << GetLastError() << '\n';
         exit(0);
     }
 }
@@ -184,8 +189,14 @@ void ConhostController::set_font_size(short newWidth, short newHeight) {
     wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
     // ---------------------------
 
-    SetCurrentConsoleFontEx(*s_target_buffer_p, FALSE, &cfi);
-    SetCurrentConsoleFontEx(*s_inactive_buffer_p, FALSE, &cfi);
+    if (!SetCurrentConsoleFontEx(*s_target_buffer_p, FALSE, &cfi)) {
+        std::cout << "SetCurrentConsoleFontEx() failed for target: " << GetLastError() << '\n';
+        exit(0);
+    }
+    if (!SetCurrentConsoleFontEx(*s_inactive_buffer_p, FALSE, &cfi)) {
+        std::cout << "SetCurrentConsoleFontEx() failed for inactive: " << GetLastError() << '\n';
+        exit(0);
+    }
 }
 
 

@@ -132,6 +132,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ANSI.cpp" />
+    <ClCompile Include="Buffer.cpp" />
+    <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="ControllerImpl.cpp" />
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="NameComponent.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
@@ -142,6 +146,9 @@
     <ClCompile Include="Transform2dComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ANSI.h" />
+    <ClInclude Include="Buffer.h" />
+    <ClInclude Include="Controller.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="HECS.h" />
     <ClInclude Include="NameComponent.h" />

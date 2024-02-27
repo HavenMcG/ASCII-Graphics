@@ -7,6 +7,8 @@ using std::cout;
 namespace hecs {
 	void ConsoleRenderer::render(SpriteComponentManager* sprite_manager, Transform2dComponentManager* transform_manager) {
 
+		cc->switch_target_buffer();
+
 		PixelData frame{ cc->canvas_width(), cc->canvas_height() };
 
 		for (int i = 0; i < sprite_manager->m_components.size(); ++i) {
@@ -74,8 +76,8 @@ namespace hecs {
 
 		//std::swap(frame, last_frame);
 
-		cc->switch_target_buffer();
-		cc->move_cursor_to(0, 0);
+		//cc->switch_target_buffer();
+		//cc->move_cursor_to(0, 0);
 		draw(frame, Coord{ 0,0 });
 		cc->switch_display_buffer();
 
