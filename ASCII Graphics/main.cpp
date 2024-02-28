@@ -101,8 +101,9 @@ int main() {
     int subminion1_gap = 3;
     tfcm.set_local(subminion1, Coord{ -pink_minion_img.width - subminion1_gap, -pink_minion_img.height - subminion1_gap });
 
-    auto delay = 1ms;
-
+    auto delay = 0ms;
+    auto start = std::chrono::high_resolution_clock::now();
+    int frame_count = 0;
     int count = 0;
     while (true) {
         sleep_for(delay);
@@ -116,7 +117,10 @@ int main() {
         move_in_orbit(subminion1, subminion1_gap, spcm, tfcm);
         rr.render(&spcm, &tfcm);
         ++count;
+        ++frame_count;
+        if (std::chrono::high_resolution_clock::now() - start >= 4s) break;
     }
+    buf_0.write(std::to_string((double)frame_count / 4));
 }
 
 PixelData read_image_data(std::string filepath) {
