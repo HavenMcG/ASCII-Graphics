@@ -22,60 +22,60 @@ namespace hecs {
 
 		}
 		
-		//if (frame.width == last_frame.width && frame.height == last_frame.height) {
-		//	RenderCode rc = RenderCode{};
-		//	String row_code = "";
-		//	Coord start; // beginning of changed area
-		//	bool writing = false;
-		//	Color current;
-		//	Color previous;
-		//	//cc->move_cursor_to(0, 0);
-		//	for (int row = 0; row < frame.height; ++row) {
-		//		for (int col = 0; col < frame.width; ++col) {
-		//			current = frame.pixel(col, row);
-		//			previous = last_frame.pixel(col, row);
-		//			if (current != previous) {
-		//				if (writing) {
-		//					row_code += to_ansi_bcolor(current);
-		//					row_code += ' ';
-		//				}
-		//				else {
-		//					writing = true;
-		//					start = { col,row };
-		//					row_code += to_ansi_bcolor(current);
-		//					row_code += ' ';
-		//				}
-		//			}
-		//			else {
-		//				if (writing) {
-		//					writing = false;
-		//					rc.push_back(row_code);
-		//					cc->move_cursor_to(start);
-		//					write(rc);
-		//					rc = RenderCode{};
-		//					row_code = "";
-		//				}
-		//			}
-		//		}
-		//		if (writing) {
-		//			writing = false;
-		//			rc.push_back(row_code);
-		//			cc->move_cursor_to(start);
-		//			write(rc);
-		//			rc = RenderCode{};
-		//			row_code = "";
-		//		}
-		//	}
-		//}
-		//else {
-		//	draw(frame, Coord{ 0,0 });
-		//}
+		if (frame.width == last_frame.width && frame.height == last_frame.height) {
+			RenderCode rc = RenderCode{};
+			String row_code = "";
+			Coord start; // beginning of changed area
+			bool writing = false;
+			Color current;
+			Color previous;
+			//cc->move_cursor_to(0, 0);
+			for (int row = 0; row < frame.height; ++row) {
+				for (int col = 0; col < frame.width; ++col) {
+					current = frame.pixel(col, row);
+					previous = last_frame.pixel(col, row);
+					if (current != previous) {
+						if (writing) {
+							row_code += hcon::to_ansi_bcolor(current);
+							row_code += ' ';
+						}
+						else {
+							writing = true;
+							start = { col,row };
+							row_code += hcon::to_ansi_bcolor(current);
+							row_code += ' ';
+						}
+					}
+					else {
+						if (writing) {
+							writing = false;
+							rc.push_back(row_code);
+							tb->set_cursor_pos(start.x, start.y);
+							write(rc);
+							rc = RenderCode{};
+							row_code = "";
+						}
+					}
+				}
+				if (writing) {
+					writing = false;
+					rc.push_back(row_code);
+					tb->set_cursor_pos(start.x,start.y);
+					write(rc);
+					rc = RenderCode{};
+					row_code = "";
+				}
+			}
+		}
+		else {
+			draw(frame, Coord{ 0,0 });
+		}
 
 		//std::swap(frame, last_frame);
 
 		//cc->switch_target_buffer();
-		//cc->move_cursor_to(0, 0);
-		draw(frame, Coord{ 0,0 });
+		//tb->set_cursor_pos(0, 0);
+		//draw(frame, Coord{ 0,0 });
 		ww->display_buffer(*tb);
 
 		/*for (int i = 0; i < sprite_manager->m_components.size(); ++i) {

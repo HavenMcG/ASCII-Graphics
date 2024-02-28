@@ -64,9 +64,17 @@ namespace hcon {
 	}
 
 	void BufferImpl::set_font_size(short width, short height) {
-		CONSOLE_FONT_INFOEX new_font = m_font_info;
-		new_font.dwFontSize = COORD{ width, height };
-		if (!SetCurrentConsoleFontEx(m_handle, FALSE, &new_font)) {
+		// ---------------------------
+		CONSOLE_FONT_INFOEX cfi;
+		cfi.cbSize = sizeof(cfi);
+		cfi.nFont = 0;
+		cfi.dwFontSize.X = width;        // Width of each character in the font
+		cfi.dwFontSize.Y = height;       // Height
+		cfi.FontFamily = FF_DONTCARE;
+		cfi.FontWeight = FW_NORMAL;
+		wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
+		// ---------------------------
+		if (!SetCurrentConsoleFontEx(m_handle, FALSE, &cfi)) {
 			throw std::exception{ "SetCurrentConsoleFontEx() failed: " + GetLastError() };
 		}
 		update_font_info();
