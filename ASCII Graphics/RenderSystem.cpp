@@ -3,8 +3,14 @@
 namespace hecs {
 	void ConsoleRenderer::render(SpriteComponentManager* sprite_manager, Transform2dComponentManager* transform_manager) {
 
-		if (tb == b1) tb = b2;
-		else tb = b1;
+		if (tb == b1) {
+			tb = b2;
+			last_frame = &b2_last_frame;
+		}
+		else {
+			tb = b1;
+			last_frame = &b1_last_frame;
+		}
 
 		PixelData frame{ tb->buffer_size().x, tb->buffer_size().y };
 
@@ -22,18 +28,18 @@ namespace hecs {
 
 		}
 		
-		if (frame.width == last_frame.width && frame.height == last_frame.height) {
+		if (frame.width == last_frame->width && frame.height == last_frame->height) {
 			RenderCode rc = RenderCode{};
 			String row_code = "";
 			Coord start; // beginning of changed area
 			bool writing = false;
 			Color current;
 			Color previous;
-			//cc->move_cursor_to(0, 0);
+			tb->set_cursor_pos(0, 0);
 			for (int row = 0; row < frame.height; ++row) {
 				for (int col = 0; col < frame.width; ++col) {
 					current = frame.pixel(col, row);
-					previous = last_frame.pixel(col, row);
+					previous = last_frame->pixel(col, row);
 					if (current != previous) {
 						if (writing) {
 							row_code += hcon::to_ansi_bcolor(current);
@@ -71,18 +77,8 @@ namespace hecs {
 			draw(frame, Coord{ 0,0 });
 		}
 
-		//std::swap(frame, last_frame);
-
-		//cc->switch_target_buffer();
-		//tb->set_cursor_pos(0, 0);
-		//draw(frame, Coord{ 0,0 });
+		std::swap(frame, *last_frame);
 		ww->display_buffer(*tb);
-
-		/*for (int i = 0; i < sprite_manager->m_components.size(); ++i) {
-			e = sprite_manager->m_components[i].owner;
-			pos = transform_manager->get_component(e);
-			draw(sprite_manager->m_components[i].pixel_data, pos->world);
-		}*/
 	}
 
 	RenderCode ConsoleRenderer::create_render_code(PixelData pd) {

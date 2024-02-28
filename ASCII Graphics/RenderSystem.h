@@ -10,7 +10,7 @@ namespace hecs {
 	class ConsoleRenderer {
 	public:
 		ConsoleRenderer(hcon::Window* wwww, hcon::Buffer* bb1, hcon::Buffer* bb2)
-			: ww{ wwww }, b1{ bb1 }, b2{ bb2 }, tb{ b1 } {}
+			: ww{ wwww }, b1{ bb1 }, b2{ bb2 }, tb{ b1 }, last_frame{ &b1_last_frame } {}
 		void render(SpriteComponentManager* sprites, Transform2dComponentManager* transforms);
 		void draw(PixelData sp, Coord position);
 		//void move(int index, Coord new_pos);
@@ -22,6 +22,8 @@ namespace hecs {
 		using RenderCode = Vector<String>;
 		RenderCode create_render_code(PixelData pd);
 		void write(RenderCode rc);
-		PixelData last_frame = PixelData{};
+		PixelData b1_last_frame;
+		PixelData b2_last_frame;
+		PixelData* last_frame;
 	};
 }

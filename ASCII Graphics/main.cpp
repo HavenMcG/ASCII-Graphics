@@ -31,7 +31,7 @@ int main() {
     //buf_1.set_bcolor(66, 135, 245);
     ww.display_buffer(buf_1);
     buf_1.set_font_size(2, 2);
-    buf_1.set_buffer_size(2800, 300);
+    buf_1.set_buffer_size(400, 300);
     ww.display_buffer(buf_0);
     buf_1.set_bufferwindow_size(buf_1.max_bufferwindow_size().x - 1, buf_1.max_bufferwindow_size().y - 1);
 
@@ -44,7 +44,7 @@ int main() {
     //buf_2.set_bcolor(200, 114, 232);
     ww.display_buffer(buf_2);
     buf_2.set_font_size(2, 2);
-    buf_2.set_buffer_size(2800, 300);
+    buf_2.set_buffer_size(400, 300);
     ww.display_buffer(buf_0);
     buf_2.set_bufferwindow_size(buf_2.max_bufferwindow_size().x-1, buf_2.max_bufferwindow_size().y-1);
     //buf_2.write(s);
@@ -101,11 +101,11 @@ int main() {
     int subminion1_gap = 3;
     tfcm.set_local(subminion1, Coord{ -pink_minion_img.width - subminion1_gap, -pink_minion_img.height - subminion1_gap });
 
-    auto delay = 0ms;
+    auto delay = 1ms;
 
     int count = 0;
     while (true) {
-        //sleep_for(delay);
+        sleep_for(delay);
         if (count == 4) {
             move_in_orbit(smiley1, smiley1_gap, spcm, tfcm);
             count = 0;
