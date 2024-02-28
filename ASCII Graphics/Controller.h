@@ -1,5 +1,6 @@
 #pragma once
 #include "ANSI.h"
+#include "Buffer.h"
 
 namespace hcon {
 
@@ -11,6 +12,7 @@ namespace hcon {
 		~Controller();
 		Controller(const Controller&) = delete;
 
+		Buffer* buffer(int i);
 		void switch_target_buffer();
 		void switch_display_buffer();
 		void write(std::string s);

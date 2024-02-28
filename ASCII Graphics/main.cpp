@@ -21,26 +21,40 @@ int main() {
 
     hcon::Controller cc;
     ConsoleRenderer rr{ &cc };
-    cc.set_resolution(600, 300+8);
     cc.maximize();
 
-    PixelData background_img = read_image_data("../seasidegarden.bmp");
-    PixelData smiley_img = read_image_data("../test01.bmp");
+    hcon::Buffer* buf_1 = cc.buffer(0);
+    hcon::Buffer* buf_2 = cc.buffer(1);
 
-    hecs::SpriteComponentManager spcm;
-    hecs::Transform2dComponentManager tfcm;
+    buf_1->set_font_size(2, 2);
+    buf_1->set_buffer_size(2800, 300);
+    buf_1->set_bufferwindow_size(buf_1->buffer_info().dwMaximumWindowSize.X-1, buf_1->buffer_info().dwMaximumWindowSize.Y-1);
+    for (int i = 0; i < 180000; ++i) {
+        buf_1->write("X");
+    }
 
-    hecs::SpriteComponent* spcomp;
-    hecs::Transform2dComponent* tfcomp;
-    Entity smiley1 = 1;
-    spcomp = spcm.add_component(smiley1,smiley_img);
-    tfcomp = tfcm.add_component(smiley1);
+    cc.switch_display_buffer();
+    cc.switch_target_buffer();
+    buf_2->set_font_size(2, 2);
+    buf_2->set_buffer_size(2800, 300);
+    buf_2->set_bufferwindow_size(buf_2->buffer_info().dwMaximumWindowSize.X-1, buf_2->buffer_info().dwMaximumWindowSize.Y-1);
+    for (int i = 0; i < 180000; ++i) {
+        buf_2->write("I");
+    }
 
-    cc.write("hello!");
+    cc.switch_display_buffer();
+    cc.switch_target_buffer();
+    buf_2->set_cursor_pos(0, 0);
+    for (int i = 0; i < 180000; ++i) {
+        buf_2->write(std::to_string((char)219));
+    }
 
-    //rr.render(&spcm, &tfcm);
-    //cc.move_cursor_to(0, 0);
-    std::cin.get();
+    while (true) {
+        std::cin.get();
+        cc.move_cursor_to(0, 0);
+        cc.switch_display_buffer();
+        cc.switch_target_buffer();
+    }
 }
 
 PixelData read_image_data(std::string filepath) {

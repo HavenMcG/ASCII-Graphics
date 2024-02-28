@@ -16,6 +16,7 @@ namespace hcon {
 		}
 
 		ControllerImpl();
+		Buffer* buffer(int i);
 		void switch_target_buffer();
 		void switch_visible_buffer();
 		void write(std::string s);
@@ -58,6 +59,10 @@ namespace hcon {
 		target_buffer = 0;
 		visible_buffer = 0;
 		SetConsoleActiveScreenBuffer(buffers[visible_buffer].handle());
+	}
+
+	Buffer* ControllerImpl::buffer(int i) {
+		return &buffers[i];
 	}
 
 	void ControllerImpl::switch_target_buffer() {
@@ -184,6 +189,7 @@ namespace hcon {
 	Controller::~Controller() {
 		delete pimpl;
 	}
+	Buffer* hcon::Controller::buffer(int i) { return pimpl->buffer(i); }
 	void Controller::switch_target_buffer() { pimpl->switch_target_buffer(); }
 	void Controller::switch_display_buffer() { pimpl->switch_visible_buffer(); }
 	void Controller::write(std::string s) { pimpl->write(s); }
