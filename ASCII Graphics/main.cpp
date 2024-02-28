@@ -19,8 +19,8 @@ void move_in_orbit(Entity e, int gap, hecs::SpriteComponentManager& spcm, hecs::
 
 int main() {
 
-    hcon::Window cc;
-    cc.maximize();
+    hcon::Window ww;
+    ww.maximize();
 
     hcon::Buffer buf_0{ hcon::Buffer::std_output_handle };
     hcon::Buffer buf_1{};
@@ -30,9 +30,9 @@ int main() {
 
     //buf_1.set_bcolor(66, 135, 245);
     buf_1.set_font_size(2, 2);
-    cc.display_buffer(buf_1);
+    ww.display_buffer(buf_1);
     buf_1.set_buffer_size(2800, 300);
-    cc.display_buffer(buf_0);
+    ww.display_buffer(buf_0);
     buf_1.set_bufferwindow_size(buf_1.max_bufferwindow_size().x - 1, buf_1.max_bufferwindow_size().y - 1);
 
     std::string s = "";
@@ -43,13 +43,13 @@ int main() {
 
     //buf_2.set_bcolor(200, 114, 232);
     buf_2.set_font_size(2, 2);
-    cc.display_buffer(buf_2);
+    ww.display_buffer(buf_2);
     buf_2.set_buffer_size(2800, 300);
-    cc.display_buffer(buf_0);
+    ww.display_buffer(buf_0);
     buf_2.set_bufferwindow_size(buf_2.max_bufferwindow_size().x-1, buf_2.max_bufferwindow_size().y-1);
     //buf_2.write(s);
 
-    ConsoleRenderer rr{ &cc, &buf_1, &buf_2 };
+    ConsoleRenderer rr{ &ww, &buf_1, &buf_2 };
 
     //^^ Renderer Setup ^^
     //======================================================================================================================================

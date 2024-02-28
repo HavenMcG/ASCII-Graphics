@@ -9,13 +9,13 @@ namespace hecs {
 
 	class ConsoleRenderer {
 	public:
-		ConsoleRenderer(hcon::Window* cccc, hcon::Buffer* bb1, hcon::Buffer* bb2)
-			: cc{ cccc }, b1{ bb1 }, b2{ bb2 }, tb{ b1 } {}
+		ConsoleRenderer(hcon::Window* wwww, hcon::Buffer* bb1, hcon::Buffer* bb2)
+			: ww{ wwww }, b1{ bb1 }, b2{ bb2 }, tb{ b1 } {}
 		void render(SpriteComponentManager* sprites, Transform2dComponentManager* transforms);
 		void draw(PixelData sp, Coord position);
 		//void move(int index, Coord new_pos);
 	private:
-		hcon::Window* cc;
+		hcon::Window* ww;
 		hcon::Buffer* b1;
 		hcon::Buffer* b2;
 		hcon::Buffer* tb;

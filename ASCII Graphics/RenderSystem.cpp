@@ -76,7 +76,7 @@ namespace hecs {
 		//cc->switch_target_buffer();
 		//cc->move_cursor_to(0, 0);
 		draw(frame, Coord{ 0,0 });
-		cc->display_buffer(*tb);
+		ww->display_buffer(*tb);
 
 		/*for (int i = 0; i < sprite_manager->m_components.size(); ++i) {
 			e = sprite_manager->m_components[i].owner;
