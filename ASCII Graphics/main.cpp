@@ -30,7 +30,7 @@ int main() {
 
     //buf_1.set_bcolor(66, 135, 245);
     ww.display_buffer(buf_1);
-    buf_1.set_font_size(2, 2);
+    buf_1.set_font_size(3, 3);
     buf_1.set_buffer_size(400, 300);
     ww.display_buffer(buf_0);
     buf_1.set_bufferwindow_size(buf_1.max_bufferwindow_size().x - 1, buf_1.max_bufferwindow_size().y - 1);
@@ -43,7 +43,7 @@ int main() {
 
     //buf_2.set_bcolor(200, 114, 232);
     ww.display_buffer(buf_2);
-    buf_2.set_font_size(2, 2);
+    buf_2.set_font_size(3, 3);
     buf_2.set_buffer_size(400, 300);
     ww.display_buffer(buf_0);
     buf_2.set_bufferwindow_size(buf_2.max_bufferwindow_size().x-1, buf_2.max_bufferwindow_size().y-1);
