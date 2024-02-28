@@ -19,19 +19,22 @@ void move_in_orbit(Entity e, int gap, hecs::SpriteComponentManager& spcm, hecs::
 
 int main() {
 
+    hcon::Window cc;
+    cc.maximize();
     hcon::Window ww;
     ww.maximize();
 
     hcon::Buffer buf_0{ hcon::Buffer::std_output_handle };
     hcon::Buffer buf_1{};
     hcon::Buffer buf_2{};
-
     buf_0.write("Loading...");
 
-    //buf_1.set_bcolor(66, 135, 245);
-    ww.display_buffer(buf_1);
+    buf_1.set_bcolor(66, 135, 245);
     buf_1.set_font_size(2, 2);
+    cc.display_buffer(buf_1);
+    ww.display_buffer(buf_1);
     buf_1.set_buffer_size(2800, 300);
+    cc.display_buffer(buf_0);
     ww.display_buffer(buf_0);
     buf_1.set_bufferwindow_size(buf_1.max_bufferwindow_size().x - 1, buf_1.max_bufferwindow_size().y - 1);
 
@@ -39,84 +42,31 @@ int main() {
     for (int i = 0; i < 2800 * 300; ++i) {
         s += " ";
     }
-    //buf_1.write(s);
+    buf_1.write(s);
 
-    //buf_2.set_bcolor(200, 114, 232);
-    ww.display_buffer(buf_2);
+    buf_2.set_bcolor(200, 114, 232);
     buf_2.set_font_size(2, 2);
+    cc.display_buffer(buf_2);
+    ww.display_buffer(buf_2);
     buf_2.set_buffer_size(2800, 300);
+    cc.display_buffer(buf_0);
     ww.display_buffer(buf_0);
-    buf_2.set_bufferwindow_size(buf_2.max_bufferwindow_size().x-1, buf_2.max_bufferwindow_size().y-1);
-    //buf_2.write(s);
+    buf_2.set_bufferwindow_size(buf_2.max_bufferwindow_size().x - 1, buf_2.max_bufferwindow_size().y - 1);
+    buf_2.write(s);
 
-    ConsoleRenderer rr{ &ww, &buf_1, &buf_2 };
+    ConsoleRenderer rr{ &cc, &buf_1, &buf_2 };
 
     //^^ Renderer Setup ^^
     //======================================================================================================================================
     //vv Other vv
 
-    PixelData background_img = read_image_data("../seasidegarden.bmp");
-    PixelData smiley_img = read_image_data("../test01.bmp");
-    PixelData green_minion_img = read_image_data("../GreenMinion.bmp");
-    PixelData pink_minion_img = read_image_data("../PinkMinion.bmp");
-
-    hecs::SpriteComponentManager spcm;
-    hecs::Transform2dComponentManager tfcm;
-
-    std::vector<Entity> Entities;
-
-    hecs::SpriteComponent* spcomp;
-    hecs::Transform2dComponent* tfcomp;
-
-    Entity background = 0;
-    spcomp = spcm.add_component(background, background_img);
-    tfcomp = tfcm.add_component(background, 0, 0);
-
-    Entity smiley2 = 2;
-    spcomp = spcm.add_component(smiley2, smiley_img);
-    tfcomp = tfcm.add_component(smiley2, background, 200, 125);
-
-    Entity smiley1 = 1;
-    spcomp = spcm.add_component(smiley1, smiley_img);
-    tfcomp = tfcm.add_component(smiley1, smiley2);
-
-    int smiley1_gap = 50;
-    tfcm.set_local(smiley1, Coord{ -smiley_img.width - smiley1_gap, -smiley_img.height - smiley1_gap });
-
-    Entity minion1 = 3;
-    spcomp = spcm.add_component(minion1, green_minion_img);
-    tfcomp = tfcm.add_component(minion1, smiley1);
-
-    int minion1_gap = 16;
-    tfcm.set_local(minion1, Coord{ -green_minion_img.width - minion1_gap, -green_minion_img.height - minion1_gap });
-
-    /*Entity minion2 = 4;
-    spcomp = spcm.add_component(minion2, green_minion_img);
-    tfcomp = tfcm.add_component(minion2, smiley1, smiley_img.width + 1, smiley_img.height + 1);*/
-
-    Entity subminion1 = 5;
-    spcomp = spcm.add_component(subminion1, pink_minion_img);
-    tfcomp = tfcm.add_component(subminion1, minion1);
-
-    int subminion1_gap = 3;
-    tfcm.set_local(subminion1, Coord{ -pink_minion_img.width - subminion1_gap, -pink_minion_img.height - subminion1_gap });
-
-    auto delay = 0ms;
-
-    int count = 0;
     while (true) {
-        //sleep_for(delay);
-        if (count == 4) {
-            move_in_orbit(smiley1, smiley1_gap, spcm, tfcm);
-            count = 0;
-        }
-        if (count % 2 == 0) {
-            move_in_orbit(minion1, minion1_gap, spcm, tfcm);
-        }
-        move_in_orbit(subminion1, subminion1_gap, spcm, tfcm);
-        rr.render(&spcm, &tfcm);
-        ++count;
+        ww.display_buffer(buf_1);
+        sleep_for(1ms);
+        ww.display_buffer(buf_2);
+        sleep_for(1ms);
     }
+
 }
 
 PixelData read_image_data(std::string filepath) {
