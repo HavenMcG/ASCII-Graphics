@@ -58,6 +58,9 @@
     <ClCompile Include="ANSI.cpp">
       <Filter>Conhost</Filter>
     </ClCompile>
+    <ClCompile Include="ControllerImpl.cpp">
+      <Filter>Conhost\Legacy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SpriteComponent.h">
@@ -92,6 +95,9 @@
     </ClInclude>
     <ClInclude Include="ANSI.h">
       <Filter>Conhost</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerImpl.h">
+      <Filter>Conhost\Legacy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

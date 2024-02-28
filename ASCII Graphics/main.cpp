@@ -26,29 +26,36 @@ int main() {
     hcon::Buffer* buf_1 = cc.buffer(0);
     hcon::Buffer* buf_2 = cc.buffer(1);
 
+    buf_1->set_bcolor(66, 135, 245);
     buf_1->set_font_size(2, 2);
     buf_1->set_buffer_size(2800, 300);
     buf_1->set_bufferwindow_size(buf_1->buffer_info().dwMaximumWindowSize.X-1, buf_1->buffer_info().dwMaximumWindowSize.Y-1);
-    for (int i = 0; i < 180000; ++i) {
-        buf_1->write("X");
+    for (int i = 0; i < 2800*300; ++i) {
+        buf_1->write(" ");
     }
 
     cc.switch_display_buffer();
     cc.switch_target_buffer();
+    buf_2->set_bcolor(200, 114, 232);
     buf_2->set_font_size(2, 2);
     buf_2->set_buffer_size(2800, 300);
     buf_2->set_bufferwindow_size(buf_2->buffer_info().dwMaximumWindowSize.X-1, buf_2->buffer_info().dwMaximumWindowSize.Y-1);
-    for (int i = 0; i < 180000; ++i) {
-        buf_2->write("I");
+    for (int i = 0; i < 2800*300; ++i) {
+        buf_2->write(" ");
     }
 
     cc.switch_display_buffer();
     cc.switch_target_buffer();
+    buf_2->set_bcolor(209, 170, 102);
     buf_2->set_cursor_pos(0, 0);
     for (int i = 0; i < 180000; ++i) {
-        buf_2->write(std::to_string((char)219));
+        /*std::string s = "";
+        s += (char)219;*/
+        buf_2->write(" ");
     }
 
+    cc.switch_display_buffer();
+    cc.switch_target_buffer();
     while (true) {
         std::cin.get();
         cc.move_cursor_to(0, 0);

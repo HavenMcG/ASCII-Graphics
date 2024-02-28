@@ -5,6 +5,8 @@
 
 namespace hcon {
 
+	class BufferImpl;
+
 	class Buffer {
 	public:
 		enum HandleType {
