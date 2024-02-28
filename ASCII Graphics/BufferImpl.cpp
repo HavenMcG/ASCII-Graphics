@@ -40,11 +40,17 @@ namespace hcon {
 		}
 	}
 
-	void BufferImpl::write(const std::string& s) {
+	void BufferImpl::slow_write(const std::string& s) {
 		DWORD chars_written = 0;
 		if (!WriteConsoleA(m_handle, s.c_str(), s.size(), &chars_written, NULL)) {
 			throw std::exception{ "WriteConsoleA() failed: " + GetLastError() };
 		}
+		
+	}
+
+	void BufferImpl::write(COORD c, const std::string& s) {
+		DWORD chars_written = 0;
+		WriteConsoleOutputCharacterA(m_handle, s.c_str(), s.size(), c, &chars_written);
 	}
 
 	void BufferImpl::set_buffer_size(short width, short height) {
@@ -88,26 +94,26 @@ namespace hcon {
 	}
 
 	void BufferImpl::set_fcolor(Color c) {
-		write(to_ansi_fcolor(c));
+		slow_write(to_ansi_fcolor(c));
 	}
 
 	void BufferImpl::set_bcolor(Color c) {
-		write(to_ansi_bcolor(c));
+		slow_write(to_ansi_bcolor(c));
 	}
 
 	void BufferImpl::reset_colors() {
-		write("\033[0m");
+		slow_write("\033[0m");
 	}
 
 	void BufferImpl::copy(HANDLE h_source, SMALL_RECT source_rect, SMALL_RECT destination_rect) {
-		int block_width = source_rect.Right - source_rect.Left;
-		int block_height = source_rect.Bottom - source_rect.Top;
-		PCHAR_INFO* chiBuffer = new PCHAR_INFO[block_width*block_height];
-		COORD block_size{ block_width,block_height };
+		int block_width = source_rect.Right - source_rect.Left + 1;
+		int block_height = source_rect.Bottom - source_rect.Top + 1;
+		CHAR_INFO* chiBuffer = new CHAR_INFO[block_width * block_height];
+		COORD block_size{ block_width - 1,block_height - 1 };
 		COORD chiBuffer_top_left{ 0,0 };
 		bool read_success = ReadConsoleOutputA(
 			h_source,
-			*chiBuffer,
+			chiBuffer,
 			block_size,
 			chiBuffer_top_left,
 			&source_rect
@@ -118,7 +124,7 @@ namespace hcon {
 
 		bool write_success = WriteConsoleOutputA(
 			m_handle,
-			*chiBuffer,
+			chiBuffer,
 			block_size,
 			chiBuffer_top_left,
 			&destination_rect

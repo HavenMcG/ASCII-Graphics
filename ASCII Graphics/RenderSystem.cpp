@@ -88,10 +88,11 @@ namespace hecs {
 		for (int i = 0; i < pd.data.size(); ++i) {
 			Color current_color = pd.data[i];
 			if (current_color != prev_color || i == 0) {
-				row_code += hcon::to_ansi_bcolor(current_color);
+				//row_code += hcon::to_ansi_bcolor(current_color);
+				tb->set_bcolor(current_color);
 				prev_color = current_color;
 			}
-			row_code += ' ';
+			row_code += 'X';
 			if ((i + 1) % pd.width == 0) {
 				frame_code.push_back(row_code);
 				row_code = "";
@@ -103,8 +104,9 @@ namespace hecs {
 	void ConsoleRenderer::write(RenderCode rc) {
 		Coord start_pos = tb->cursor_pos();
 		for (int i = 0; i < rc.size(); ++i) {
-			tb->set_cursor_pos(start_pos.x, start_pos.y + i);
-			tb->write(rc[i]);
+			/*tb->set_cursor_pos(start_pos.x, start_pos.y + i);
+			tb->slow_write(rc[i]);*/
+			tb->write({ start_pos.x, start_pos.y + i }, rc[i]);
 		}
 	}
 

@@ -26,7 +26,7 @@ int main() {
     hcon::Buffer buf_1{};
     hcon::Buffer buf_2{};
 
-    buf_0.write("Loading...");
+    buf_0.slow_write("Loading...");
 
     //buf_1.set_bcolor(66, 135, 245);
     ww.display_buffer(buf_1);
@@ -105,7 +105,9 @@ int main() {
     auto start = std::chrono::high_resolution_clock::now();
     int frame_count = 0;
     int count = 0;
-    while (true) {
+    rr.render(&spcm, &tfcm);
+    while (true) {}
+    /*while (true) {
         sleep_for(delay);
         if (count == 4) {
             move_in_orbit(smiley1, smiley1_gap, spcm, tfcm);
@@ -120,7 +122,7 @@ int main() {
         ++frame_count;
         if (std::chrono::high_resolution_clock::now() - start >= 4s) break;
     }
-    buf_0.write(std::to_string((double)frame_count / 4));
+    buf_0.slow_write(std::to_string((double)frame_count / 4));*/
 }
 
 PixelData read_image_data(std::string filepath) {

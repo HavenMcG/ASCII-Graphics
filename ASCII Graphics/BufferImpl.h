@@ -16,7 +16,8 @@ namespace hcon {
 		BufferImpl(BufferImpl&&) = default;
 		~BufferImpl();
 
-		void write(const std::string& s);
+		void write(COORD c, const std::string& s);
+		void slow_write(const std::string& s);
 		void set_buffer_size(short width, short height);
 		void set_bufferwindow_size(short width, short height);
 		void set_font_size(short width, short height);

@@ -27,8 +27,8 @@ namespace hcon {
 	Buffer::~Buffer() {
 		delete pimpl;
 	}
-
-	void Buffer::write(const std::string& s) { pimpl->write(s); }
+	void Buffer::write(Coord c, const std::string& s) { pimpl->write(to_wincoord(c), s); }
+	void Buffer::slow_write(const std::string& s) { pimpl->slow_write(s); }
 	void Buffer::set_buffer_size(short width, short height) { pimpl->set_buffer_size(width, height); }
 	void Buffer::set_bufferwindow_size(short width, short height) { pimpl->set_bufferwindow_size(width, height); }
 	void Buffer::set_font_size(short width, short height) { pimpl->set_font_size(width, height); }
