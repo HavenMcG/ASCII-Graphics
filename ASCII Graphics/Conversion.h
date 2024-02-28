@@ -11,9 +11,9 @@ namespace hcon {
 		return COORD{ c.x, c.y };
 	}
 	static Rect to_rect(SMALL_RECT r) {
-		return Rect{ Coord{ r.Left,r.Top },Coord{ r.Right,r.Bottom } };
+		return Rect{ r.Left, r.Top, r.Right, r.Bottom };
 	}
 	static SMALL_RECT to_winsmallrect(Rect r) {
-		return SMALL_RECT{ r.top_left.x, r.top_left.y, r.bottom_right.x, r.bottom_right.y };
+		return SMALL_RECT{ r.left, r.top, r.right, r.bottom };
 	}
 }

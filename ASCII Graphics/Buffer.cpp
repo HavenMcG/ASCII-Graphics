@@ -36,6 +36,7 @@ namespace hcon {
 	void Buffer::set_fcolor(Color c) { pimpl->set_fcolor(c); }
 	void Buffer::set_bcolor(Color c) { pimpl->set_bcolor(c); }
 	void Buffer::reset_colors() { pimpl->reset_colors(); }
+	void Buffer::copy(const Buffer& source, Rect source_rect, Rect destination_rect) { pimpl->copy(source.handle(), to_winsmallrect(source_rect), to_winsmallrect(destination_rect)); }
 
 	// Getters
 	void* Buffer::handle() const { return pimpl->handle(); }

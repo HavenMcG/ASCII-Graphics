@@ -34,11 +34,12 @@ int main() {
     ww.display_buffer(buf_0);
     buf_1.set_bufferwindow_size(buf_1.max_bufferwindow_size().x - 1, buf_1.max_bufferwindow_size().y - 1);
 
-    std::string s = "";
+    std::string s_1 = "";
     for (int i = 0; i < 2800 * 300; ++i) {
-        s += " ";
+        //s_1 += char(219);
+        s_1 += ' ';
     }
-    buf_1.write(s);
+    buf_1.write(s_1);
 
     buf_2.set_bcolor(200, 114, 232);
     buf_2.set_font_size(2, 2);
@@ -46,7 +47,18 @@ int main() {
     buf_2.set_buffer_size(2800, 300);
     ww.display_buffer(buf_0);
     buf_2.set_bufferwindow_size(buf_2.max_bufferwindow_size().x - 1, buf_2.max_bufferwindow_size().y - 1);
-    buf_2.write(s);
+    std::string s_2 = "";
+    for (int i = 0; i < 2800 * 300; ++i) {
+        s_2 += ' ';
+    }
+    buf_2.write(s_2);
+
+    ww.display_buffer(buf_1);
+    buf_1.copy(
+        buf_2,
+        Rect{ 0,0,700,150 },
+        Rect{ 0,0,700,150 }
+    );
 
     ConsoleRenderer rr{ &ww, &buf_1, &buf_2 };
 
@@ -57,11 +69,11 @@ int main() {
     int frame_count = 0;
     while (true) {
         ww.display_buffer(buf_1);
-        //sleep_for(1ms);
+        sleep_for(4000ms);
         ww.display_buffer(buf_2);
-        //sleep_for(1ms);
-        frame_count += 2;
-        if (std::chrono::high_resolution_clock::now() - start >= 4s) break;
+        sleep_for(4000ms);
+        //frame_count += 2;
+        //if (std::chrono::high_resolution_clock::now() - start >= 4s) break;
     }
     ww.display_buffer(buf_0);
     buf_0.write(("\n" + std::to_string((double)frame_count / 4)));

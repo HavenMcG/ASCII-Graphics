@@ -20,8 +20,10 @@ bool operator==(Coord lhs, Coord rhs);
 bool operator!=(Coord lhs, Coord rhs);
 
 struct Rect {
-	Coord top_left;
-	Coord bottom_right;
+	short left;
+	short top;
+	short right;
+	short bottom;
 };
 
 struct Color {
