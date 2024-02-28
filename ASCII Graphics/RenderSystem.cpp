@@ -3,9 +3,10 @@
 namespace hecs {
 	void ConsoleRenderer::render(SpriteComponentManager* sprite_manager, Transform2dComponentManager* transform_manager) {
 
-		cc->switch_target_buffer();
+		if (tb == b1) tb = b2;
+		else tb = b1;
 
-		PixelData frame{ cc->canvas_width(), cc->canvas_height() };
+		PixelData frame{ tb->buffer_size().x, tb->buffer_size().y };
 
 		for (int i = 0; i < sprite_manager->m_components.size(); ++i) {
 
@@ -75,7 +76,7 @@ namespace hecs {
 		//cc->switch_target_buffer();
 		//cc->move_cursor_to(0, 0);
 		draw(frame, Coord{ 0,0 });
-		cc->switch_display_buffer();
+		cc->display_buffer(*tb);
 
 		/*for (int i = 0; i < sprite_manager->m_components.size(); ++i) {
 			e = sprite_manager->m_components[i].owner;
@@ -91,7 +92,7 @@ namespace hecs {
 		for (int i = 0; i < pd.data.size(); ++i) {
 			Color current_color = pd.data[i];
 			if (current_color != prev_color || i == 0) {
-				row_code += to_ansi_bcolor(current_color);
+				row_code += hcon::to_ansi_bcolor(current_color);
 				prev_color = current_color;
 			}
 			row_code += ' ';
@@ -104,15 +105,15 @@ namespace hecs {
 	}
 
 	void ConsoleRenderer::write(RenderCode rc) {
-		Coord start_pos = cc->cursor_position();
+		Coord start_pos = tb->cursor_pos();
 		for (int i = 0; i < rc.size(); ++i) {
-			cc->move_cursor_to(start_pos.x, start_pos.y + i);
-			cc->write(rc[i]);
+			tb->set_cursor_pos(start_pos.x, start_pos.y + i);
+			tb->write(rc[i]);
 		}
 	}
 
 	void ConsoleRenderer::draw(PixelData pd, Coord position) {
-		cc->move_cursor_to(position);
+		tb->set_cursor_pos(position.x, position.y);
 		write(create_render_code(pd));
 	}
 

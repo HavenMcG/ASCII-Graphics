@@ -19,6 +19,11 @@ Coord operator+(Coord lhs, Coord rhs);
 bool operator==(Coord lhs, Coord rhs);
 bool operator!=(Coord lhs, Coord rhs);
 
+struct Rect {
+	Coord top_left;
+	Coord bottom_right;
+};
+
 struct Color {
 	int r, g, b;
 	Color() : r{ 0 }, g{ 0 }, b{ 0 } {}
@@ -27,7 +32,6 @@ struct Color {
 bool operator==(const Color lhs, const Color rhs);
 bool operator!=(const Color lhs, const Color rhs);
 
-//using PixelData = std::vector<std::vector<Color>>;
 struct PixelData {
 	short width;
 	short height;

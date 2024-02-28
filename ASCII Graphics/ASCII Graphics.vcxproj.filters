@@ -20,8 +20,11 @@
     <Filter Include="Conhost">
       <UniqueIdentifier>{76d2f9cc-174f-492d-8248-1b3d9d1e7093}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Conhost\Legacy">
-      <UniqueIdentifier>{9c3f9cc1-5aa4-4ce3-bfde-6008b2ba9f8e}</UniqueIdentifier>
+    <Filter Include="Conhost\Buffer">
+      <UniqueIdentifier>{d3db9bb1-37e7-4d66-91e3-fa9a951dff4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Conhost\Window">
+      <UniqueIdentifier>{1266587c-d95e-4ee1-a76d-803734ffe297}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -46,20 +49,20 @@
     <ClCompile Include="main.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Controller.cpp">
-      <Filter>Conhost</Filter>
-    </ClCompile>
-    <ClCompile Include="Buffer.cpp">
-      <Filter>Conhost</Filter>
-    </ClCompile>
-    <ClCompile Include="ConhostController.cpp">
-      <Filter>Conhost\Legacy</Filter>
-    </ClCompile>
     <ClCompile Include="ANSI.cpp">
       <Filter>Conhost</Filter>
     </ClCompile>
-    <ClCompile Include="ControllerImpl.cpp">
-      <Filter>Conhost\Legacy</Filter>
+    <ClCompile Include="Window.cpp">
+      <Filter>Conhost\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowImpl.cpp">
+      <Filter>Conhost\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer.cpp">
+      <Filter>Conhost\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="BufferImpl.cpp">
+      <Filter>Conhost\Buffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -84,20 +87,23 @@
     <ClInclude Include="GBase.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Controller.h">
-      <Filter>Conhost</Filter>
-    </ClInclude>
-    <ClInclude Include="Buffer.h">
-      <Filter>Conhost</Filter>
-    </ClInclude>
-    <ClInclude Include="ConhostController.h">
-      <Filter>Conhost\Legacy</Filter>
-    </ClInclude>
     <ClInclude Include="ANSI.h">
       <Filter>Conhost</Filter>
     </ClInclude>
-    <ClInclude Include="ControllerImpl.h">
-      <Filter>Conhost\Legacy</Filter>
+    <ClInclude Include="Conversion.h">
+      <Filter>Conhost</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Conhost\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowImpl.h">
+      <Filter>Conhost\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Conhost\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferImpl.h">
+      <Filter>Conhost\Buffer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

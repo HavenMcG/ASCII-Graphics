@@ -134,27 +134,28 @@
   <ItemGroup>
     <ClCompile Include="ANSI.cpp" />
     <ClCompile Include="Buffer.cpp" />
-    <ClCompile Include="Controller.cpp" />
-    <ClCompile Include="ControllerImpl.cpp" />
+    <ClCompile Include="BufferImpl.cpp" />
+    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WindowImpl.cpp" />
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="NameComponent.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="GBase.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ConhostController.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="Transform2dComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ANSI.h" />
     <ClInclude Include="Buffer.h" />
-    <ClInclude Include="Controller.h" />
-    <ClInclude Include="ControllerImpl.h" />
+    <ClInclude Include="BufferImpl.h" />
+    <ClInclude Include="Window.h" />
+    <ClInclude Include="WindowImpl.h" />
+    <ClInclude Include="Conversion.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="HECS.h" />
     <ClInclude Include="NameComponent.h" />
     <ClInclude Include="RenderSystem.h" />
-    <ClInclude Include="ConhostController.h" />
     <ClInclude Include="GBase.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="Transform2dComponent.h" />

@@ -1,7 +1,7 @@
 #pragma once
-#include <Windows.h>
 #include <string>
-#include "ANSI.h"
+#include <memory>
+#include "GBase.h"
 
 namespace hcon {
 
@@ -32,20 +32,14 @@ namespace hcon {
 		void reset_colors();
 
 		// Getters
-		HANDLE handle() const { return m_handle; }
-		COORD cursor_pos() const { return m_buffer_info.dwCursorPosition; }
-		COORD buffer_size() const { return m_buffer_info.dwSize; }
-		SMALL_RECT bufferwindow_corners() const { return m_buffer_info.srWindow; }
-		COORD font_size() const { return m_font_info.dwFontSize; }
-		CONSOLE_SCREEN_BUFFER_INFO buffer_info() const { return m_buffer_info; }
-		CONSOLE_FONT_INFOEX font_info() const { return m_font_info; }
+		void* handle() const;
+		Coord cursor_pos() const;
+		Coord buffer_size() const;
+		Rect bufferwindow_corners() const;
+		Coord font_size() const;
+		Coord max_bufferwindow_size() const;
 
 	private:
-		HANDLE m_handle;
-		CONSOLE_SCREEN_BUFFER_INFO m_buffer_info;
-		CONSOLE_FONT_INFOEX m_font_info;
-		HandleType m_htype;
-		void update_buffer_info();
-		void update_font_info();
+		BufferImpl* pimpl;
 	};
 }

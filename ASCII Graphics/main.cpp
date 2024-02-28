@@ -1,5 +1,5 @@
 
-#include "Controller.h"
+#include "Window.h"
 #include "GBase.h"
 #include <vector>
 #include <iostream>
@@ -19,49 +19,43 @@ void move_in_orbit(Entity e, int gap, hecs::SpriteComponentManager& spcm, hecs::
 
 int main() {
 
-    hcon::Controller cc;
-    ConsoleRenderer rr{ &cc };
+    hcon::Window cc;
     cc.maximize();
 
-    hcon::Buffer* buf_1 = cc.buffer(0);
-    hcon::Buffer* buf_2 = cc.buffer(1);
+    hcon::Buffer buf_0{ hcon::Buffer::std_output_handle };
+    hcon::Buffer buf_1{};
+    hcon::Buffer buf_2{};
 
-    buf_1->set_bcolor(66, 135, 245);
-    buf_1->set_font_size(2, 2);
-    buf_1->set_buffer_size(2800, 300);
-    buf_1->set_bufferwindow_size(buf_1->buffer_info().dwMaximumWindowSize.X-1, buf_1->buffer_info().dwMaximumWindowSize.Y-1);
-    for (int i = 0; i < 2800*300; ++i) {
-        buf_1->write(" ");
-    }
+    buf_0.write("Loading...");
 
-    cc.switch_display_buffer();
-    cc.switch_target_buffer();
-    buf_2->set_bcolor(200, 114, 232);
-    buf_2->set_font_size(2, 2);
-    buf_2->set_buffer_size(2800, 300);
-    buf_2->set_bufferwindow_size(buf_2->buffer_info().dwMaximumWindowSize.X-1, buf_2->buffer_info().dwMaximumWindowSize.Y-1);
-    for (int i = 0; i < 2800*300; ++i) {
-        buf_2->write(" ");
-    }
+    //buf_1.set_bcolor(66, 135, 245);
+    buf_1.set_font_size(2, 2);
+    cc.display_buffer(buf_1);
+    buf_1.set_buffer_size(2800, 300);
+    cc.display_buffer(buf_0);
+    buf_1.set_bufferwindow_size(buf_1.max_bufferwindow_size().x - 1, buf_1.max_bufferwindow_size().y - 1);
 
-    cc.switch_display_buffer();
-    cc.switch_target_buffer();
-    buf_2->set_bcolor(209, 170, 102);
-    buf_2->set_cursor_pos(0, 0);
-    for (int i = 0; i < 180000; ++i) {
-        /*std::string s = "";
-        s += (char)219;*/
-        buf_2->write(" ");
+    std::string s = "";
+    for (int i = 0; i < 2800 * 300; ++i) {
+        s += " ";
     }
+    //buf_1.write(s);
 
-    cc.switch_display_buffer();
-    cc.switch_target_buffer();
-    while (true) {
-        std::cin.get();
-        cc.move_cursor_to(0, 0);
-        cc.switch_display_buffer();
-        cc.switch_target_buffer();
-    }
+    //buf_2.set_bcolor(200, 114, 232);
+    buf_2.set_font_size(2, 2);
+    cc.display_buffer(buf_2);
+    buf_2.set_buffer_size(2800, 300);
+    cc.display_buffer(buf_0);
+    buf_2.set_bufferwindow_size(buf_2.max_bufferwindow_size().x-1, buf_2.max_bufferwindow_size().y-1);
+    //buf_2.write(s);
+
+    ConsoleRenderer rr{ &cc, &buf_1, &buf_2 };
+
+    //^^ Renderer Setup ^^
+    //======================================================================================================================================
+    //vv Other vv
+
+    
 }
 
 PixelData read_image_data(std::string filepath) {
