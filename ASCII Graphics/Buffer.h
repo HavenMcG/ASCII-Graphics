@@ -30,6 +30,7 @@ namespace hcon {
 		void set_bcolor(Color c);
 		void set_bcolor(int r, int g, int b) { set_bcolor(Color{ r,g,b }); }
 		void reset_colors();
+		void copy(const Buffer& source, Rect source_rect, Rect destination_rect);
 
 		// Getters
 		void* handle() const;

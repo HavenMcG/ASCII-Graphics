@@ -27,6 +27,7 @@ namespace hcon {
 		void set_bcolor(Color c);
 		void set_bcolor(int r, int g, int b) { set_bcolor(Color{ r,g,b }); }
 		void reset_colors();
+		void copy(HANDLE h_source, SMALL_RECT source_rect, SMALL_RECT destination_rect);
 
 		// Getters
 		HANDLE handle() const { return m_handle; }

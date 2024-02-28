@@ -99,6 +99,35 @@ namespace hcon {
 		write("\033[0m");
 	}
 
+	void BufferImpl::copy(HANDLE h_source, SMALL_RECT source_rect, SMALL_RECT destination_rect) {
+		int block_width = source_rect.Right - source_rect.Left;
+		int block_height = source_rect.Bottom - source_rect.Top;
+		PCHAR_INFO* chiBuffer = new PCHAR_INFO[block_width*block_height];
+		COORD block_size{ block_width,block_height };
+		COORD chiBuffer_top_left{ 0,0 };
+		bool read_success = ReadConsoleOutputA(
+			h_source,
+			*chiBuffer,
+			block_size,
+			chiBuffer_top_left,
+			&source_rect
+		);
+		if (!read_success) {
+			throw std::exception{ "ReadConsoleOutputA() failed: " + GetLastError() };
+		}
+
+		bool write_success = WriteConsoleOutputA(
+			m_handle,
+			*chiBuffer,
+			block_size,
+			chiBuffer_top_left,
+			&destination_rect
+		);
+		if (!write_success) {
+			throw std::exception{ "WriteConsoleOutputA() failed: " + GetLastError() };
+		}
+	}
+
 	void BufferImpl::update_buffer_info() {
 		if (!GetConsoleScreenBufferInfo(m_handle, &m_buffer_info)) {
 			throw std::exception{ "GetConsoleScreenBufferImplInfo() failed: " + GetLastError() };
